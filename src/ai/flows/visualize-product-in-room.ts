@@ -44,24 +44,26 @@ const visualizeProductInRoomFlow = ai.defineFlow(
     outputSchema: VisualizeProductInRoomOutputSchema,
   },
   async ({ productImageUri, roomImageUri }) => {
-    const { media } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-image-preview',
+    const { output } = await ai.generate({
+      model: 'googleai/gemini-pro-vision',
       prompt: [
         { media: { url: productImageUri } },
         { media: { url: roomImageUri } },
-        { text: 'Place the product from the first image into the room from the second image. The product should be placed in a natural and realistic position. Maintain the original art style of both the product and the room. Do not add any extra objects.' },
+        { text: 'Place the product from the first image into the room from the second image. The product should be placed in a natural and realistic position. Maintain the original art style of both the product and the room. Do not add any extra objects. Generate only the image, no text.' },
       ],
-      config: {
-        responseModalities: ['IMAGE'],
-      },
+      output: {
+        format: 'image',
+      }
     });
 
-    if (!media?.url) {
+    const generatedImage = output.media;
+
+    if (!generatedImage?.url) {
       throw new Error('Image generation failed to produce an output.');
     }
     
     return {
-      generatedImageUri: media.url,
+      generatedImageUri: generatedImage.url,
     };
   }
 );

@@ -35,19 +35,8 @@ export default function ProfilePage() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(true);
     const [userRole, setUserRole] = useState<string | null>(null);
+    const [profileData, setProfileData] = useState<Profile | null>(null);
 
-    const formSchema = userRole === 'artisan' ? artisanProfileSchema : buyerProfileSchema;
-
-    const form = useForm<Profile>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: "",
-            location: "",
-            story: "",
-            heritage: "",
-        },
-    });
-    
     useEffect(() => {
         const role = localStorage.getItem('userRole');
         setUserRole(role);
@@ -55,8 +44,8 @@ export default function ProfilePage() {
         async function loadProfile() {
             try {
                 setIsLoading(true);
-                const profileData = await getProfile();
-                form.reset(profileData);
+                const data = await getProfile();
+                setProfileData(data);
             } catch (error) {
                  toast({
                     variant: "destructive",
@@ -68,9 +57,30 @@ export default function ProfilePage() {
             }
         }
         loadProfile();
-    }, [form, toast]);
+    }, [toast]);
 
+    if (isLoading) {
+        return <ProfileSkeleton isArtisan={userRole === 'artisan'} />;
+    }
 
+    if (!profileData) {
+        return <div>Failed to load profile.</div>;
+    }
+
+    if (userRole === 'artisan') {
+        return <ArtisanProfileForm initialData={profileData} />;
+    }
+    
+    return <BuyerProfileForm initialData={profileData} />;
+}
+
+function ArtisanProfileForm({ initialData }: { initialData: Profile }) {
+    const { toast } = useToast();
+    const form = useForm<Profile>({
+        resolver: zodResolver(artisanProfileSchema),
+        defaultValues: initialData,
+    });
+    
     const handleSaveChanges = async (data: Profile) => {
         try {
             await saveProfileAction(data);
@@ -87,18 +97,6 @@ export default function ProfilePage() {
         }
     };
 
-    if (isLoading) {
-        return <ProfileSkeleton isArtisan={userRole === 'artisan'} />;
-    }
-
-    if (userRole === 'artisan') {
-        return <ArtisanProfileForm form={form} onSubmit={handleSaveChanges} />;
-    }
-    
-    return <BuyerProfileForm form={form} onSubmit={handleSaveChanges} />;
-}
-
-function ArtisanProfileForm({ form, onSubmit }: { form: any, onSubmit: (data: Profile) => void }) {
     return (
         <div className="grid gap-6">
             <div className="flex items-center">
@@ -113,7 +111,7 @@ function ArtisanProfileForm({ form, onSubmit }: { form: any, onSubmit: (data: Pr
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+                        <form onSubmit={form.handleSubmit(handleSaveChanges)} className="grid gap-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <FormField control={form.control} name="name" render={({ field }) => (
                                     <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
@@ -139,7 +137,36 @@ function ArtisanProfileForm({ form, onSubmit }: { form: any, onSubmit: (data: Pr
     )
 }
 
-function BuyerProfileForm({ form, onSubmit }: { form: any, onSubmit: (data: Profile) => void }) {
+function BuyerProfileForm({ initialData }: { initialData: Profile }) {
+    const { toast } = useToast();
+    const form = useForm<Profile>({
+        resolver: zodResolver(buyerProfileSchema),
+        defaultValues: initialData,
+    });
+
+     const handleSaveChanges = async (data: Profile) => {
+        try {
+            // Ensure we don't overwrite artisan-specific fields
+            const payload: Profile = {
+                ...initialData,
+                name: data.name,
+                location: data.location,
+            };
+            await saveProfileAction(payload);
+            toast({
+                title: "Profile Saved!",
+                description: "Your information has been updated successfully.",
+            });
+        } catch (error) {
+             toast({
+                variant: "destructive",
+                title: "Save Failed",
+                description: "Could not save your profile. Please try again.",
+            });
+        }
+    };
+
+
      return (
         <div className="grid gap-6">
             <div className="flex items-center">
@@ -154,7 +181,7 @@ function BuyerProfileForm({ form, onSubmit }: { form: any, onSubmit: (data: Prof
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+                        <form onSubmit={form.handleSubmit(handleSaveChanges)} className="grid gap-6">
                              <div className="flex items-center gap-4">
                                 <Label>Account Status:</Label>
                                 <Badge variant="secondary" className="flex items-center gap-2">
