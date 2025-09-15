@@ -10,23 +10,68 @@ import { Label } from "@/components/ui/label";
 import { KalaConnectIcon } from "@/components/icons";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState, useEffect, Suspense } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { saveProfileAction } from "@/lib/actions";
+import { useToast } from "@/hooks/use-toast";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
+
+const registerSchema = z.object({
+    fullName: z.string().min(2, "Full name is required."),
+    email: z.string().email("Invalid email address."),
+    password: z.string().min(6, "Password must be at least 6 characters."),
+    role: z.enum(["buyer", "artisan"]),
+});
+
 
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   const initialRole = searchParams.get('role') === 'artisan' ? 'artisan' : 'buyer';
-  const [role, setRole] = useState(initialRole);
+  
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      role: initialRole,
+    },
+  });
+  
+   useEffect(() => {
+    form.setValue('role', initialRole);
+  }, [initialRole, form]);
 
-  useEffect(() => {
-    setRole(initialRole);
-  }, [initialRole]);
 
-
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async (values: z.infer<typeof registerSchema>) => {
+    
+    // In a real app, you would save the user to Firebase Auth here.
+    // For this prototype, we'll just save the profile info for artisans.
+    if (values.role === 'artisan') {
+        try {
+            await saveProfileAction({
+                name: values.fullName,
+                location: "", // These would be part of a more detailed onboarding
+                story: "",
+                heritage: "",
+            });
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Registration Failed",
+                description: "Could not save artisan profile. Please try again.",
+            });
+            return;
+        }
+    }
+    
     if (typeof window !== 'undefined') {
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userRole', role);
+      localStorage.setItem('userRole', values.role);
     }
     router.push('/dashboard');
   };
@@ -47,51 +92,59 @@ function RegisterForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleRegister} className="grid gap-4">
-            <div className="grid gap-2">
-                <Label>I want to join as a...</Label>
-                <RadioGroup value={role} onValueChange={setRole} className="grid grid-cols-2 gap-4">
-                    <div>
-                        <RadioGroupItem value="buyer" id="buyer" className="peer sr-only" />
-                        <Label
-                            htmlFor="buyer"
-                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                        >
-                            Buyer
-                        </Label>
-                    </div>
-                    <div>
-                        <RadioGroupItem value="artisan" id="artisan" className="peer sr-only" />
-                         <Label
-                            htmlFor="artisan"
-                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                        >
-                            Artisan
-                        </Label>
-                    </div>
-                </RadioGroup>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="full-name">Full name</Label>
-              <Input id="full-name" placeholder="Ravi Kumar" required />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" />
-            </div>
-            <Button type="submit" className="w-full">
-              Create an account
-            </Button>
-          </form>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleRegister)} className="grid gap-4">
+              <FormField control={form.control} name="role" render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>I want to join as a...</FormLabel>
+                   <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="grid grid-cols-2 gap-4"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                             <RadioGroupItem value="buyer" id="buyer" className="peer sr-only" />
+                          </FormControl>
+                          <Label
+                              htmlFor="buyer"
+                              className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary w-full"
+                          >
+                              Buyer
+                          </Label>
+                        </FormItem>
+                         <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="artisan" id="artisan" className="peer sr-only" />
+                          </FormControl>
+                           <Label
+                              htmlFor="artisan"
+                              className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary w-full"
+                          >
+                              Artisan
+                          </Label>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="fullName" render={({ field }) => (
+                  <FormItem><FormLabel>Full name</FormLabel><FormControl><Input placeholder="Ravi Kumar" {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+              <FormField control={form.control} name="email" render={({ field }) => (
+                  <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="m@example.com" {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+              <FormField control={form.control} name="password" render={({ field }) => (
+                  <FormItem><FormLabel>Password</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+
+              <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Creating Account..." : "Create an account"}
+              </Button>
+            </form>
+          </Form>
           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}
             <Link href="/login" className="underline">
