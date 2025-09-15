@@ -46,7 +46,6 @@ export function UserMenu() {
               <DropdownMenuSeparator />
               <DropdownMenuItem 
                 onClick={() => router.push('/dashboard/profile')} 
-                disabled={userRole !== 'artisan'}
               >
                 Profile
               </DropdownMenuItem>

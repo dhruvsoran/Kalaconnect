@@ -15,21 +15,31 @@ import { getProfile, Profile } from "@/lib/db";
 import { saveProfileAction } from "@/lib/actions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle } from "lucide-react";
 
-const profileSchema = z.object({
+const artisanProfileSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
     location: z.string().min(2, "Location is required."),
     story: z.string().min(10, "Your story should be at least 10 characters."),
     heritage: z.string().min(10, "Cultural heritage should be at least 10 characters.")
 });
 
+const buyerProfileSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters."),
+    location: z.string().min(2, "Location is required."),
+});
+
 
 export default function ProfilePage() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(true);
+    const [userRole, setUserRole] = useState<string | null>(null);
+
+    const formSchema = userRole === 'artisan' ? artisanProfileSchema : buyerProfileSchema;
 
     const form = useForm<Profile>({
-        resolver: zodResolver(profileSchema),
+        resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
             location: "",
@@ -39,6 +49,9 @@ export default function ProfilePage() {
     });
     
     useEffect(() => {
+        const role = localStorage.getItem('userRole');
+        setUserRole(role);
+
         async function loadProfile() {
             try {
                 setIsLoading(true);
@@ -75,13 +88,21 @@ export default function ProfilePage() {
     };
 
     if (isLoading) {
-        return <ProfileSkeleton />;
+        return <ProfileSkeleton isArtisan={userRole === 'artisan'} />;
     }
 
+    if (userRole === 'artisan') {
+        return <ArtisanProfileForm form={form} onSubmit={handleSaveChanges} />;
+    }
+    
+    return <BuyerProfileForm form={form} onSubmit={handleSaveChanges} />;
+}
+
+function ArtisanProfileForm({ form, onSubmit }: { form: any, onSubmit: (data: Profile) => void }) {
     return (
         <div className="grid gap-6">
             <div className="flex items-center">
-                <h1 className="text-lg font-semibold md:text-2xl font-headline">My Profile</h1>
+                <h1 className="text-lg font-semibold md:text-2xl font-headline">Artisan Profile</h1>
             </div>
             <Card>
                 <CardHeader>
@@ -92,7 +113,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(handleSaveChanges)} className="grid gap-6">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <FormField control={form.control} name="name" render={({ field }) => (
                                     <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
@@ -115,11 +136,53 @@ export default function ProfilePage() {
                 </CardContent>
             </Card>
         </div>
+    )
+}
+
+function BuyerProfileForm({ form, onSubmit }: { form: any, onSubmit: (data: Profile) => void }) {
+     return (
+        <div className="grid gap-6">
+            <div className="flex items-center">
+                <h1 className="text-lg font-semibold md:text-2xl font-headline">My Profile</h1>
+            </div>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Your Information</CardTitle>
+                    <CardDescription>
+                       Manage your account details and view your status.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+                             <div className="flex items-center gap-4">
+                                <Label>Account Status:</Label>
+                                <Badge variant="secondary" className="flex items-center gap-2">
+                                    <CheckCircle className="h-4 w-4 text-green-500" />
+                                    Verified
+                                </Badge>
+                             </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField control={form.control} name="name" render={({ field }) => (
+                                    <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                )} />
+                                <FormField control={form.control} name="location" render={({ field }) => (
+                                    <FormItem><FormLabel>Location / City</FormLabel><FormControl><Input {...field} placeholder="e.g. Mumbai, India"/></FormControl><FormMessage /></FormItem>
+                                )} />
+                            </div>
+                            <Button type="submit" className="w-fit" disabled={form.formState.isSubmitting}>
+                                {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </div>
     );
 }
 
 
-function ProfileSkeleton() {
+function ProfileSkeleton({ isArtisan }: { isArtisan: boolean }) {
     return (
         <div className="grid gap-6">
             <div className="flex items-center">
@@ -127,10 +190,8 @@ function ProfileSkeleton() {
             </div>
             <Card>
                 <CardHeader>
-                    <CardTitle>Your Story</CardTitle>
-                    <CardDescription>
-                        This information helps customers connect with you and your craft.
-                    </CardDescription>
+                    <CardTitle><Skeleton className="h-8 w-48" /></CardTitle>
+                    <CardDescription><Skeleton className="h-4 w-full max-w-sm" /></CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -143,19 +204,21 @@ function ProfileSkeleton() {
                             <Skeleton className="h-10 w-full" />
                         </div>
                     </div>
-                    <div className="grid gap-2">
-                        <Label>Your Story / Bio</Label>
-                        <Skeleton className="h-32 w-full" />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label>Cultural Heritage</Label>
-                        <Skeleton className="h-24 w-full" />
-                    </div>
+                     {isArtisan && (
+                        <>
+                            <div className="grid gap-2">
+                                <Label>Your Story / Bio</Label>
+                                <Skeleton className="h-32 w-full" />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>Cultural Heritage</Label>
+                                <Skeleton className="h-24 w-full" />
+                            </div>
+                        </>
+                    )}
                     <Button className="w-fit" disabled>Save Changes</Button>
                 </CardContent>
             </Card>
         </div>
     )
 }
-
-    
