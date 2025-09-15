@@ -5,18 +5,10 @@ export function KalaConnectIcon(props: SVGProps<SVGSVGElement>) {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      fill="currentColor"
       {...props}
     >
-      <path d="M12 2c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" />
-      <path d="M12 12a4.5 4.5 0 0 0-4.5 4.5c0 1.657 2.015 3 4.5 3s4.5-1.343 4.5-3A4.5 4.5 0 0 0 12 12z" />
-      <path d="M15.536 9.464a4.5 4.5 0 0 0-7.072 0" />
-      <path d="M12 4.5a2.25 2.25 0 0 1 2.25 2.25" />
-      <path d="M12 4.5a2.25 2.25 0 0 0-2.25 2.25" />
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.24 14.76L12 12.52l-4.24 4.24-1.41-1.41L10.59 12 6.34 7.76l1.41-1.41L12 10.1l4.24-4.24 1.41 1.41L13.41 12l4.24 4.24-1.41 1.41zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-8l-4-4v8l4-4zm4 0l4-4v8l-4-4z" />
     </svg>
   );
 }
