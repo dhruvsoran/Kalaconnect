@@ -41,7 +41,7 @@ const initialData: DbData = {
             price: "₹8,999",
             stock: 25,
             date: "2023-07-12T10:42:00Z",
-            image: "https://picsum.photos/seed/saree/400/400",
+            image: "https://picsum.photos/seed/saree/800/800",
             aiHint: "painted saree"
         },
         {
@@ -51,7 +51,7 @@ const initialData: DbData = {
             price: "₹3,499",
             stock: 8,
             date: "2023-10-18T15:21:00Z",
-            image: "https://picsum.photos/seed/horse/400/400",
+            image: "https://picsum.photos/seed/horse/800/800",
             aiHint: "terracotta statue"
         },
         {
@@ -61,7 +61,7 @@ const initialData: DbData = {
             price: "₹999",
             stock: 100,
             date: "2024-01-05T09:12:00Z",
-            image: "https://picsum.photos/seed/coasters/400/400",
+            image: "https://picsum.photos/seed/coasters/800/800",
             aiHint: "art coasters"
         },
         {
@@ -71,7 +71,7 @@ const initialData: DbData = {
             price: "₹15,000",
             stock: 5,
             date: "2022-11-29T13:55:00Z",
-            image: "https://picsum.photos/seed/shawl/400/400",
+            image: "https://picsum.photos/seed/shawl/800/800",
             aiHint: "pashmina shawl"
         },
          {
@@ -81,7 +81,7 @@ const initialData: DbData = {
             price: "₹4,200",
             stock: 12,
             date: "2024-03-15T11:00:00Z",
-            image: "https://picsum.photos/seed/vase/400/400",
+            image: "https://picsum.photos/seed/vase/800/800",
             aiHint: "blue pottery"
         },
          {
@@ -91,7 +91,7 @@ const initialData: DbData = {
             price: "₹1,800",
             stock: 30,
             date: "2024-04-02T18:30:00Z",
-            image: "https://picsum.photos/seed/turtle/400/400",
+            image: "https://picsum.photos/seed/turtle/800/800",
             aiHint: "dhokra metal"
         }
     ],
