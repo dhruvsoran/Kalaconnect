@@ -6,22 +6,57 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CreditCard, Landmark, QrCode } from "lucide-react";
+import Image from "next/image";
 
 const checkoutSchema = z.object({
   name: z.string().min(2, "Name is required"),
   address: z.string().min(5, "Address is required"),
   city: z.string().min(2, "City is required"),
   pincode: z.string().length(6, "Pincode must be 6 digits"),
-  cardName: z.string().min(2, "Name on card is required"),
-  cardNumber: z.string().length(16, "Card number must be 16 digits"),
-  cardExpiry: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Invalid expiry date (MM/YY)"),
-  cardCvc: z.string().length(3, "CVC must be 3 digits"),
+  paymentMethod: z.enum(["card", "upi", "netbanking"]),
+  cardName: z.string().optional(),
+  cardNumber: z.string().optional(),
+  cardExpiry: z.string().optional(),
+  cardCvc: z.string().optional(),
+  upiId: z.string().optional(),
+  bank: z.string().optional(),
+}).refine(data => {
+    if (data.paymentMethod === 'card') {
+        return (
+            !!data.cardName && data.cardName.length >= 2 &&
+            !!data.cardNumber && data.cardNumber.length === 16 &&
+            !!data.cardExpiry && /^(0[1-9]|1[0-2])\/\d{2}$/.test(data.cardExpiry) &&
+            !!data.cardCvc && data.cardCvc.length === 3
+        );
+    }
+    return true;
+}, {
+    message: "Complete all card details",
+    path: ["cardName"], 
+}).refine(data => {
+     if (data.paymentMethod === 'upi') {
+        return !!data.upiId && data.upiId.includes('@');
+     }
+     return true;
+}, {
+    message: "Please enter a valid UPI ID",
+    path: ["upiId"],
+}).refine(data => {
+    if (data.paymentMethod === 'netbanking') {
+        return !!data.bank && data.bank.length > 0;
+    }
+    return true;
+}, {
+    message: "Please select a bank",
+    path: ["bank"],
 });
+
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -34,10 +69,13 @@ export default function CheckoutPage() {
         address: "",
         city: "",
         pincode: "",
+        paymentMethod: "card",
         cardName: "",
         cardNumber: "",
         cardExpiry: "",
         cardCvc: "",
+        upiId: "",
+        bank: "",
     },
   });
 
@@ -47,7 +85,9 @@ export default function CheckoutPage() {
       title: "Payment Successful!",
       description: "Your order is being processed.",
     });
+    // In a real app, you might want to clear the cart after a successful order.
     localStorage.removeItem('cart');
+    window.dispatchEvent(new Event('cartUpdated'));
     router.push("/order-confirmation");
   }
 
@@ -78,24 +118,70 @@ export default function CheckoutPage() {
                                 )} />
                             </div>
                         </section>
+                        
+                        <FormField
+                            control={form.control}
+                            name="paymentMethod"
+                            render={({ field }) => (
+                            <FormItem>
+                                <h2 className="text-xl font-semibold mb-4 font-headline">Payment Method</h2>
+                                <FormControl>
+                                    <Tabs defaultValue={field.value} onValueChange={field.onChange} className="w-full">
+                                        <TabsList className="grid w-full grid-cols-3">
+                                            <TabsTrigger value="card"><CreditCard className="mr-2 h-4 w-4"/>Card</TabsTrigger>
+                                            <TabsTrigger value="upi"><QrCode className="mr-2 h-4 w-4"/>UPI/QR</TabsTrigger>
+                                            <TabsTrigger value="netbanking"><Landmark className="mr-2 h-4 w-4"/>Net Banking</TabsTrigger>
+                                        </TabsList>
+                                        <TabsContent value="card" className="pt-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <FormField control={form.control} name="cardName" render={({ field }) => (
+                                                    <FormItem className="md:col-span-2"><FormLabel>Name on Card</FormLabel><FormControl><Input {...field} placeholder="Name as it appears on your card" /></FormControl><FormMessage /></FormItem>
+                                                )} />
+                                                <FormField control={form.control} name="cardNumber" render={({ field }) => (
+                                                    <FormItem className="md:col-span-2"><FormLabel>Card Number</FormLabel><FormControl><Input {...field} placeholder="0000 0000 0000 0000" /></FormControl><FormMessage /></FormItem>
+                                                )} />
+                                                <FormField control={form.control} name="cardExpiry" render={({ field }) => (
+                                                    <FormItem><FormLabel>Expiry Date</FormLabel><FormControl><Input {...field} placeholder="MM/YY" /></FormControl><FormMessage /></FormItem>
+                                                )} />
+                                                <FormField control={form.control} name="cardCvc" render={({ field }) => (
+                                                    <FormItem><FormLabel>CVC</FormLabel><FormControl><Input {...field} placeholder="123" /></FormControl><FormMessage /></FormItem>
+                                                )} />
+                                            </div>
+                                        </TabsContent>
+                                        <TabsContent value="upi" className="pt-6">
+                                            <div className="space-y-4 text-center">
+                                                <p className="text-muted-foreground">Scan the QR or enter your UPI ID.</p>
+                                                <div className="flex justify-center">
+                                                    <Image src="https://picsum.photos/seed/qr-code/200/200" alt="Sample QR Code" width={200} height={200} data-ai-hint="qr code" />
+                                                </div>
+                                                <FormField control={form.control} name="upiId" render={({ field }) => (
+                                                    <FormItem><FormLabel>UPI ID</FormLabel><FormControl><Input {...field} placeholder="yourname@bank" /></FormControl><FormMessage /></FormItem>
+                                                )} />
+                                            </div>
+                                        </TabsContent>
+                                        <TabsContent value="netbanking" className="pt-6">
+                                            <FormField control={form.control} name="bank" render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Select Bank</FormLabel>
+                                                     <FormControl>
+                                                        <Input list="banks" placeholder="Choose your bank" {...field} />
+                                                     </FormControl>
+                                                     <datalist id="banks">
+                                                        <option value="State Bank of India" />
+                                                        <option value="HDFC Bank" />
+                                                        <option value="ICICI Bank" />
+                                                        <option value="Axis Bank" />
+                                                        <option value="Kotak Mahindra Bank" />
+                                                     </datalist>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )} />
+                                        </TabsContent>
+                                    </Tabs>
+                                </FormControl>
+                            </FormItem>
+                        )} />
 
-                        <section>
-                            <h2 className="text-xl font-semibold mb-4 font-headline">Payment Details (Simulation)</h2>
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                 <FormField control={form.control} name="cardName" render={({ field }) => (
-                                    <FormItem className="md:col-span-2"><FormLabel>Name on Card</FormLabel><FormControl><Input {...field} placeholder="Name as it appears on your card" /></FormControl><FormMessage /></FormItem>
-                                )} />
-                                <FormField control={form.control} name="cardNumber" render={({ field }) => (
-                                    <FormItem className="md:col-span-2"><FormLabel>Card Number</FormLabel><FormControl><Input {...field} placeholder="0000 0000 0000 0000" /></FormControl><FormMessage /></FormItem>
-                                )} />
-                                 <FormField control={form.control} name="cardExpiry" render={({ field }) => (
-                                    <FormItem><FormLabel>Expiry Date</FormLabel><FormControl><Input {...field} placeholder="MM/YY" /></FormControl><FormMessage /></FormItem>
-                                )} />
-                                <FormField control={form.control} name="cardCvc" render={({ field }) => (
-                                    <FormItem><FormLabel>CVC</FormLabel><FormControl><Input {...field} placeholder="123" /></FormControl><FormMessage /></FormItem>
-                                )} />
-                            </div>
-                        </section>
                         
                         <Button type="submit" size="lg" className="w-full">
                             Place Order (Simulated)
