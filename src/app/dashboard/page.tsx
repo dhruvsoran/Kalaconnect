@@ -290,3 +290,5 @@ export default function Dashboard() {
     
     return userRole === 'artisan' ? <ArtisanDashboard /> : <BuyerDashboard />;
 }
+
+    

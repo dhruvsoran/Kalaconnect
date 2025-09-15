@@ -82,3 +82,5 @@ export async function visualizeProductInRoomAction(input: VisualizeProductInRoom
         return { error: "Failed to generate visualization. Please try again." };
     }
 }
+
+    
