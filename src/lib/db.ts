@@ -40,8 +40,8 @@ const initialData: DbData = {
             status: "Active",
             price: "₹8,999",
             stock: 25,
-            date: "2023-07-12 10:42 AM",
-            image: "https://picsum.photos/100/100?random=1",
+            date: "2023-07-12T10:42:00Z",
+            image: "https://picsum.photos/seed/saree/400/400",
             aiHint: "painted saree"
         },
         {
@@ -50,30 +50,50 @@ const initialData: DbData = {
             status: "Active",
             price: "₹3,499",
             stock: 8,
-            date: "2023-10-18 03:21 PM",
-            image: "https://picsum.photos/100/100?random=2",
+            date: "2023-10-18T15:21:00Z",
+            image: "https://picsum.photos/seed/horse/400/400",
             aiHint: "terracotta statue"
         },
         {
             name: "Warli Art Coasters (Set of 4)",
             description: "Set of four wooden coasters, hand-painted with intricate Warli art, perfect for adding a touch of ethnic charm to your home.",
-            status: "Draft",
+            status: "Active",
             price: "₹999",
             stock: 100,
-            date: "2024-01-05 09:12 AM",
-            image: "https://picsum.photos/100/100?random=3",
+            date: "2024-01-05T09:12:00Z",
+            image: "https://picsum.photos/seed/coasters/400/400",
             aiHint: "art coasters"
         },
         {
             name: "Pashmina Shawl with Sozni Embroidery",
             description: "An exquisite Pashmina shawl from Kashmir featuring delicate Sozni hand-embroidery. A timeless piece of wearable art.",
-            status: "Archived",
+            status: "Active",
             price: "₹15,000",
-            stock: 0,
-            date: "2022-11-29 01:55 PM",
-            image: "https://picsum.photos/100/100?random=4",
+            stock: 5,
+            date: "2022-11-29T13:55:00Z",
+            image: "https://picsum.photos/seed/shawl/400/400",
             aiHint: "pashmina shawl"
         },
+         {
+            name: "Blue Pottery Ceramic Vase",
+            description: "A stunning ceramic vase made with traditional Blue Pottery techniques of Jaipur, featuring intricate floral patterns in vibrant blue and white.",
+            status: "Active",
+            price: "₹4,200",
+            stock: 12,
+            date: "2024-03-15T11:00:00Z",
+            image: "https://picsum.photos/seed/vase/400/400",
+            aiHint: "blue pottery"
+        },
+         {
+            name: "Dhokra Turtle Paperweight",
+            description: "A charming turtle paperweight, handcrafted using the ancient Dhokra art form of metal casting. A unique and functional piece of decor.",
+            status: "Draft",
+            price: "₹1,800",
+            stock: 30,
+            date: "2024-04-02T18:30:00Z",
+            image: "https://picsum.photos/seed/turtle/400/400",
+            aiHint: "dhokra metal"
+        }
     ],
     profile: {
         name: "Ravi Kumar",
@@ -88,6 +108,10 @@ async function readDb(): Promise<DbData> {
     try {
         await fs.access(dbPath);
         const fileContent = await fs.readFile(dbPath, 'utf-8');
+        if (!fileContent) {
+            await writeDb(initialData);
+            return initialData;
+        }
         return JSON.parse(fileContent);
     } catch (error) {
         // If the file doesn't exist, create it with initial data
@@ -106,7 +130,7 @@ async function writeDb(data: DbData): Promise<void> {
 // Products
 export async function getProducts(): Promise<Product[]> {
     const db = await readDb();
-    return db.products;
+    return [...db.products].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export async function addProduct(product: Omit<Product, 'date'>): Promise<Product> {
@@ -118,6 +142,18 @@ export async function addProduct(product: Omit<Product, 'date'>): Promise<Produc
     db.products.unshift(newProduct); // Add to the beginning of the list
     await writeDb(db);
     return newProduct;
+}
+
+export async function deleteProduct(productName: string): Promise<{ success: boolean }> {
+    const db = await readDb();
+    const initialLength = db.products.length;
+    db.products = db.products.filter(p => p.name !== productName);
+    
+    if (db.products.length < initialLength) {
+        await writeDb(db);
+        return { success: true };
+    }
+    return { success: false };
 }
 
 

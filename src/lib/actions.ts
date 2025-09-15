@@ -4,8 +4,9 @@
 import { generateProductDescription, GenerateProductDescriptionInput } from "@/ai/flows/generate-product-descriptions";
 import { createMarketingContent, CreateMarketingContentInput } from "@/ai/flows/create-marketing-content";
 import { getChatbotAssistance, GetChatbotAssistanceInput } from "@/ai/flows/get-chatbot-assistance";
-import { addProduct, Profile, Product, saveProfile as saveProfileDb } from "@/lib/db";
+import { addProduct, deleteProduct as deleteProductDb, Profile, Product, saveProfile as saveProfileDb } from "@/lib/db";
 import { VisualizeProductInRoomInput, visualizeProductInRoom } from "@/ai/flows/visualize-product-in-room";
+import { revalidatePath } from "next/cache";
 
 type GenerateProductDescriptionActionInput = Omit<GenerateProductDescriptionInput, "productImageUri"> & {
     productImageUri: string;
@@ -56,6 +57,7 @@ export async function saveProductAction(productData: {
             status: 'Draft',
         };
         const savedProduct = await addProduct(newProduct);
+        revalidatePath('/dashboard/products');
         return { success: true, product: savedProduct };
     } catch (error) {
         console.error("Error in saveProductAction:", error);
@@ -63,9 +65,22 @@ export async function saveProductAction(productData: {
     }
 }
 
+export async function deleteProductAction(productName: string) {
+    try {
+        const result = await deleteProductDb(productName);
+        revalidatePath('/dashboard/products');
+        return result;
+    } catch (error) {
+        console.error("Error in deleteProductAction:", error);
+        return { error: "Failed to delete the product." };
+    }
+}
+
+
 export async function saveProfileAction(profileData: Profile) {
     try {
         const updatedProfile = await saveProfileDb(profileData);
+        revalidatePath('/dashboard/profile');
         return { success: true, profile: updatedProfile };
     } catch (error) {
         console.error("Error in saveProfileAction:", error);
@@ -82,5 +97,3 @@ export async function visualizeProductInRoomAction(input: VisualizeProductInRoom
         return { error: "Failed to generate visualization. Please try again." };
     }
 }
-
-    

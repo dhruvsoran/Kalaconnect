@@ -2,12 +2,17 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Brush, Zap, LineChart, MessageCircle, Mic, Bot } from 'lucide-react';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Brush, Zap, LineChart, MessageCircle, Mic, Bot, ArrowRight } from 'lucide-react';
 import { KalaConnectIcon } from '@/components/icons';
 import { HomeHeaderActions } from '@/components/home-header-actions';
+import { getProducts, Product } from '@/lib/db';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
-export default function Home() {
+export default async function Home() {
+  const allProducts = await getProducts();
+  const featuredProducts = allProducts.filter(p => p.status === 'Active').slice(0, 6);
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,6 +56,41 @@ export default function Home() {
               </Button>
             </div>
           </div>
+        </section>
+
+        <section id="featured-products" className="py-20">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline">Featured Creations</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+                        Handpicked treasures from our talented artisans.
+                    </p>
+                </div>
+                <Carousel
+                    opts={{
+                        align: "start",
+                        loop: true,
+                    }}
+                    className="w-full"
+                >
+                    <CarouselContent>
+                        {featuredProducts.map((product) => (
+                            <CarouselItem key={product.name} className="md:basis-1/2 lg:basis-1/3">
+                                <div className="p-1">
+                                    <ProductCard product={product} />
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="hidden sm:flex" />
+                    <CarouselNext className="hidden sm:flex" />
+                </Carousel>
+                 <div className="text-center mt-12">
+                    <Button asChild>
+                        <Link href="/explore">Explore All Products <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                    </Button>
+                </div>
+            </div>
         </section>
 
         <section id="features" className="py-20 bg-card border-y">
@@ -100,7 +140,7 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
             <div>
               <Image
-                src="https://picsum.photos/600/500"
+                src="https://picsum.photos/seed/homepage-artisan/600/500"
                 alt="Artisan working"
                 width={600}
                 height={500}
@@ -134,7 +174,7 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode, titl
   return (
     <Card className="text-center bg-transparent border-none shadow-none animate-fade-in-up">
       <CardHeader className="items-center">
-        <div className="bg-card p-4 rounded-full">
+        <div className="bg-primary/10 p-4 rounded-full">
           {icon}
         </div>
         <CardTitle className="mt-4 font-headline text-xl">{title}</CardTitle>
@@ -144,4 +184,31 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode, titl
       </CardContent>
     </Card>
   );
+}
+
+function ProductCard({ product }: { product: Product }) {
+    return (
+        <Card className="overflow-hidden flex flex-col h-full animate-fade-in group">
+            <CardHeader className="p-0 border-b">
+                 <Image
+                    src={product.image}
+                    alt={product.name}
+                    width={400}
+                    height={400}
+                    className="aspect-square object-cover w-full group-hover:scale-105 transition-transform duration-300"
+                    data-ai-hint={product.aiHint}
+                />
+            </CardHeader>
+            <CardContent className="p-4 flex-grow">
+                <h3 className="font-bold text-lg font-headline">{product.name}</h3>
+                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{product.description}</p>
+            </CardContent>
+            <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                 <p className="font-semibold text-lg">{product.price}</p>
+                <Button size="sm" asChild>
+                    <Link href="/explore">View</Link>
+                </Button>
+            </CardFooter>
+        </Card>
+    )
 }

@@ -1,4 +1,3 @@
-
 {
   "products": [
     {
@@ -43,9 +42,9 @@
     }
   ],
   "profile": {
-    "name": "Ravi Kumar",
-    "location": "Jaipur, Rajasthan",
-    "story": "I am a third-generation block-printer from Jaipur, keeping the traditions of my family alive through vibrant textiles...",
-    "heritage": "Sanganeri block-printing is a traditional art form from Rajasthan, known for its delicate floral patterns and use of natural dyes."
+    "name": "Dhruv Soran",
+    "location": "",
+    "story": "",
+    "heritage": ""
   }
 }
