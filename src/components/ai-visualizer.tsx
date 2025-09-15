@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState }from "react";
+import { useState, useEffect }from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -31,9 +31,13 @@ export function AiVisualizer() {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const { toast } = useToast();
 
-    useState(() => {
-        getProducts().then(prods => setProducts(prods.filter(p => p.status === 'Active')));
-    });
+    useEffect(() => {
+      async function loadProducts() {
+        const prods = await getProducts();
+        setProducts(prods.filter(p => p.status === 'Active'));
+      }
+      loadProducts();
+    }, []);
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
