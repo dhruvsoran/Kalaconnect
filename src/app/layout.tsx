@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 // This metadata is not used in a client component, but we'll keep it for now.
 // For full metadata support, this would need to be in a server component layout.
@@ -21,28 +22,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // This code runs only on the client
-    const loggedInStatus = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(loggedInStatus);
-    setIsLoading(false);
-
-    const handleStorageChange = () => {
-        const loggedInStatus = localStorage.getItem('isLoggedIn') === 'true';
-        setIsLoggedIn(loggedInStatus);
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('cartUpdated', handleStorageChange); // Using cartUpdated as a generic login/logout signal
-
-    return () => {
-        window.removeEventListener('storage', handleStorageChange);
-        window.removeEventListener('cartUpdated', handleStorageChange);
-    };
-  }, []);
+  const pathname = usePathname();
+  const isDashboardPage = pathname.startsWith('/dashboard');
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -55,7 +36,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <div className="flex flex-col min-h-screen">
-          {!isLoading && !isLoggedIn && <SiteHeader />}
+          {!isDashboardPage && <SiteHeader />}
           <main className="flex-grow">{children}</main>
           <SiteFooter />
         </div>
