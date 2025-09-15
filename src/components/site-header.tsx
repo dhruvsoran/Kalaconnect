@@ -24,7 +24,6 @@ export function SiteHeader() {
     return (
         <header className={cn(
             "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
-            isHomePage && !isScrolled ? "border-transparent" : "border-border"
         )}>
             <div className="container flex h-20 items-center justify-between">
                 <Link href="/" className="flex items-center gap-2 font-bold text-2xl font-headline transition-colors active:text-accent active:animate-pop">
@@ -32,13 +31,13 @@ export function SiteHeader() {
                     KalaConnect
                 </Link>
                 <nav className="hidden md:flex gap-6">
-                    <Link href="/#features" className="text-sm font-medium hover:underline underline-offset-4">
+                    <Link href="/#features" className="text-sm font-semibold text-muted-foreground transition-colors hover:text-primary">
                     Features
                     </Link>
-                    <Link href="/#about" className="text-sm font-medium hover:underline underline-offset-4">
+                    <Link href="/#about" className="text-sm font-semibold text-muted-foreground transition-colors hover:text-primary">
                     About
                     </Link>
-                    <Link href="/explore" className="text-sm font-medium hover:underline underline-offset-4">
+                    <Link href="/explore" className="text-sm font-semibold text-muted-foreground transition-colors hover:text-primary">
                     Explore
                     </Link>
                 </nav>
