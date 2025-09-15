@@ -93,6 +93,46 @@ const initialData: DbData = {
             date: "2024-04-02T18:30:00Z",
             image: "https://picsum.photos/seed/turtle/800/800",
             aiHint: "dhokra metal"
+        },
+        {
+            name: "Kutch Leather-work Journal",
+            description: "A beautiful leather-bound journal featuring traditional Kutchi embroidery. The perfect blend of rustic charm and intricate detail.",
+            status: "Active",
+            price: "₹2,200",
+            stock: 40,
+            date: "2024-05-01T14:00:00Z",
+            image: "https://picsum.photos/seed/journal/800/800",
+            aiHint: "leather journal"
+        },
+        {
+            name: "Channapatna Wooden Toys",
+            description: "A set of safe, eco-friendly wooden toys from Channapatna, colored with natural, non-toxic lacquers. Bright, cheerful, and full of character.",
+            status: "Active",
+            price: "₹1,500",
+            stock: 50,
+            date: "2024-04-20T10:00:00Z",
+            image: "https://picsum.photos/seed/toys/800/800",
+            aiHint: "wooden toys"
+        },
+        {
+            name: "Bidri-work Trinket Box",
+            description: "An elegant trinket box made with Bidriware, a metal handicraft from Bidar. It features a dark zinc alloy inlaid with pure silver wire.",
+            status: "Active",
+            price: "₹5,500",
+            stock: 15,
+            date: "2024-05-10T12:00:00Z",
+            image: "https://picsum.photos/seed/box/800/800",
+            aiHint: "metal box"
+        },
+        {
+            name: "Tanjore Painting of Ganesha",
+            description: "A classic Tanjore painting depicting Lord Ganesha, characterized by rich colors, gold foil, and semi-precious stone inlays. A divine addition to any wall.",
+            status: "Active",
+            price: "₹25,000",
+            stock: 3,
+            date: "2024-02-28T16:45:00Z",
+            image: "https://picsum.photos/seed/painting/800/800",
+            aiHint: "ganesha painting"
         }
     ],
     profile: {
