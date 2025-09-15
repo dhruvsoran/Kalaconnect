@@ -4,8 +4,6 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Brush, Zap, LineChart, MessageCircle, Mic, Bot, ArrowRight } from 'lucide-react';
-import { KalaConnectIcon } from '@/components/icons';
-import { HomeHeaderActions } from '@/components/home-header-actions';
 import { getProducts, Product } from '@/lib/db';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
@@ -14,29 +12,7 @@ export default async function Home() {
   const featuredProducts = allProducts.filter(p => p.status === 'Active').slice(0, 6);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <header className="container mx-auto px-4 sm:px-6 lg:px-8 absolute top-0 left-0 right-0 z-10 bg-background/80 backdrop-blur-sm">
-        <div className="flex items-center justify-between h-20">
-          <Link href="/" className="flex items-center gap-2 font-bold text-2xl font-headline transition-colors active:text-accent active:animate-pop">
-            <KalaConnectIcon className="h-8 w-8 text-primary" />
-            KalaConnect
-          </Link>
-          <nav className="hidden md:flex gap-6">
-            <Link href="#features" className="text-sm font-medium hover:underline underline-offset-4">
-              Features
-            </Link>
-            <Link href="#about" className="text-sm font-medium hover:underline underline-offset-4">
-              About
-            </Link>
-            <Link href="/explore" className="text-sm font-medium hover:underline underline-offset-4">
-              Explore
-            </Link>
-          </nav>
-          <HomeHeaderActions />
-        </div>
-      </header>
-
-      <main className="flex-grow">
+      <main>
         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white">
           <Image
             src="https://picsum.photos/seed/hero-bg/1600/900"
@@ -168,13 +144,6 @@ export default async function Home() {
           </div>
         </section>
       </main>
-
-      <footer className="bg-card border-t">
-        <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} KalaConnect. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
   );
 }
 
@@ -201,8 +170,8 @@ function ProductCard({ product }: { product: Product }) {
                  <Image
                     src={product.image}
                     alt={product.name}
-                    width={600}
-                    height={600}
+                    width={800}
+                    height={800}
                     className="aspect-square object-cover w-full group-hover:scale-105 transition-transform duration-300"
                     data-ai-hint={product.aiHint}
                 />
