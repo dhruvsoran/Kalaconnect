@@ -80,9 +80,6 @@ export default function DashboardLayout({
                      <NavItem icon={<Heart className="h-4 w-4" />} href="#">
                         Wishlist
                     </NavItem>
-                     <NavItem icon={<Camera className="h-4 w-4" />} href="/dashboard/visualizer">
-                        AI Visualizer
-                    </NavItem>
                      <NavItem icon={<User className="h-4 w-4" />} href="/dashboard/profile">
                         Profile
                     </NavItem>
