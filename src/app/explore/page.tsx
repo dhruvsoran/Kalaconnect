@@ -100,14 +100,14 @@ function ProductCard({ product }: { product: Product }) {
     };
 
     return (
-        <Card className="overflow-hidden flex flex-col animate-fade-in">
+        <Card className="overflow-hidden flex flex-col animate-fade-in group">
             <CardHeader className="p-0">
                 <Image
                     src={product.image}
                     alt={product.name}
-                    width={400}
-                    height={400}
-                    className="aspect-square object-cover w-full"
+                    width={600}
+                    height={600}
+                    className="aspect-square object-cover w-full group-hover:scale-105 transition-transform duration-300"
                     data-ai-hint={product.aiHint}
                 />
             </CardHeader>

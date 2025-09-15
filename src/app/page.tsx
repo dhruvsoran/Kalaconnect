@@ -15,7 +15,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="container mx-auto px-4 sm:px-6 lg:px-8 absolute top-0 left-0 right-0 z-10 bg-background/80 backdrop-blur-sm">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center gap-2 font-bold text-2xl font-headline transition-colors active:text-accent active:animate-pop">
             <KalaConnectIcon className="h-8 w-8 text-primary" />
@@ -37,21 +37,29 @@ export default async function Home() {
       </header>
 
       <main className="flex-grow">
-        <section className="py-20 md:py-32">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white">
+          <Image
+            src="https://picsum.photos/seed/hero-bg/1600/900"
+            alt="Artisan's hands working on a craft"
+            fill
+            className="object-cover -z-10 brightness-50"
+            data-ai-hint="artisan hands"
+            priority
+          />
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight animate-fade-in-down">
               Empowering Artisans,
               <br />
-              <span className="text-primary">Celebrating Heritage</span>
+              <span className="text-primary drop-shadow-lg">Celebrating Heritage</span>
             </h1>
-            <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground animate-fade-in-up">
+            <p className="mt-6 max-w-2xl mx-auto text-lg text-neutral-200 animate-fade-in-up">
               KalaConnect is an AI-powered marketplace that helps Indian artisans and craftsmen thrive in the digital world.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4 animate-fade-in-up">
               <Button size="lg" asChild className="w-full sm:w-auto">
                 <Link href="/register?role=artisan">Start Selling</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
+              <Button size="lg" variant="secondary" asChild className="w-full sm:w-auto">
                 <Link href="/explore">Start Buying</Link>
               </Button>
             </div>
@@ -60,7 +68,7 @@ export default async function Home() {
 
         <section id="featured-products" className="py-20">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
+                <div className="text-center mb-12 animate-fade-in-up">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline">Featured Creations</h2>
                     <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
                         Handpicked treasures from our talented artisans.
@@ -71,7 +79,7 @@ export default async function Home() {
                         align: "start",
                         loop: true,
                     }}
-                    className="w-full"
+                    className="w-full animate-fade-in-up"
                 >
                     <CarouselContent>
                         {featuredProducts.map((product) => (
@@ -85,7 +93,7 @@ export default async function Home() {
                     <CarouselPrevious className="hidden sm:flex" />
                     <CarouselNext className="hidden sm:flex" />
                 </Carousel>
-                 <div className="text-center mt-12">
+                 <div className="text-center mt-12 animate-fade-in-up">
                     <Button asChild>
                         <Link href="/explore">Explore All Products <ArrowRight className="ml-2 h-4 w-4" /></Link>
                     </Button>
@@ -95,7 +103,7 @@ export default async function Home() {
 
         <section id="features" className="py-20 bg-card border-y">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 animate-fade-in-up">
               <h2 className="text-3xl md:text-4xl font-bold font-headline">A Platform Built for You</h2>
               <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
                 Discover the tools that make selling your craft easier than ever.
@@ -138,17 +146,17 @@ export default async function Home() {
 
         <section id="about" className="py-20 md:py-32">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
-            <div>
+            <div className="animate-fade-in">
               <Image
-                src="https://picsum.photos/seed/homepage-artisan/600/500"
-                alt="Artisan working"
+                src="https://picsum.photos/seed/about-us/600/500"
+                alt="Indian Heritage Art"
                 width={600}
                 height={500}
-                className="rounded-lg shadow-xl animate-fade-in"
-                data-ai-hint="artisan hands"
+                className="rounded-lg shadow-xl"
+                data-ai-hint="indian heritage art"
               />
             </div>
-            <div className="text-left">
+            <div className="text-left animate-fade-in-up">
               <h2 className="text-3xl md:text-4xl font-bold font-headline">Weaving Tradition with Technology</h2>
               <p className="mt-6 text-lg text-muted-foreground">
                 Our mission is to bridge the gap between India's rich artisanal heritage and the global digital marketplace. We provide artisans with cutting-edge AI tools, a supportive community, and a platform to share their stories and sell their creations to the world.
@@ -193,8 +201,8 @@ function ProductCard({ product }: { product: Product }) {
                  <Image
                     src={product.image}
                     alt={product.name}
-                    width={400}
-                    height={400}
+                    width={600}
+                    height={600}
                     className="aspect-square object-cover w-full group-hover:scale-105 transition-transform duration-300"
                     data-ai-hint={product.aiHint}
                 />

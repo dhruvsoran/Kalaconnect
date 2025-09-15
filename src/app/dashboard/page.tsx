@@ -236,14 +236,14 @@ function BuyerDashboard() {
            ) : products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {products.slice(0, 4).map((product) => (
-                <Card key={product.name} className="overflow-hidden flex flex-col animate-fade-in">
+                <Card key={product.name} className="overflow-hidden flex flex-col animate-fade-in group">
                   <CardHeader className="p-0">
                     <Image
                       src={product.image}
                       alt={product.name}
-                      width={400}
-                      height={400}
-                      className="aspect-square object-cover w-full"
+                      width={600}
+                      height={600}
+                      className="aspect-square object-cover w-full group-hover:scale-105 transition-transform duration-300"
                       data-ai-hint={product.aiHint}
                     />
                   </CardHeader>
@@ -290,5 +290,3 @@ export default function Dashboard() {
     
     return userRole === 'artisan' ? <ArtisanDashboard /> : <BuyerDashboard />;
 }
-
-    
