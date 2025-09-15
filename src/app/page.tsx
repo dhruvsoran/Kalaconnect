@@ -149,7 +149,7 @@ export default async function Home() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
   return (
-    <Card className="text-center bg-transparent border-none shadow-none animate-fade-in-up">
+    <Card className="text-center bg-transparent border-none shadow-none animate-fade-in-up transition-transform duration-300 hover:scale-105">
       <CardHeader className="items-center">
         <div className="bg-primary/10 p-4 rounded-full">
           {icon}
