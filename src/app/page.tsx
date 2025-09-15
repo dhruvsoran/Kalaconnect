@@ -15,11 +15,11 @@ export default async function Home() {
       <main>
         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white">
           <Image
-            src="https://picsum.photos/seed/hero-bg/1600/900"
+            src="https://picsum.photos/seed/living-art/1600/900"
             alt="Artisan's hands working on a craft"
             fill
             className="object-cover -z-10 brightness-50"
-            data-ai-hint="artisan hands"
+            data-ai-hint="dynamic art"
             priority
           />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -124,12 +124,12 @@ export default async function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
               <Image
-                src="https://picsum.photos/seed/about-us/600/500"
+                src="https://picsum.photos/seed/vibrant-art/600/500"
                 alt="Indian Heritage Art"
                 width={600}
                 height={500}
                 className="rounded-lg shadow-xl"
-                data-ai-hint="indian heritage art"
+                data-ai-hint="vibrant art"
               />
             </div>
             <div className="text-left animate-fade-in-up">
