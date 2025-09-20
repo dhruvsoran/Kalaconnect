@@ -43,7 +43,7 @@ export default function Home() {
   }, []);
 
   const plugin = useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: false, stopOnMouseEnter: true })
+    Autoplay({ delay: 2000, stopOnInteraction: false, stopOnMouseEnter: false })
   );
 
   return (
