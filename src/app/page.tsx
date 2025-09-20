@@ -10,6 +10,7 @@ import { getProducts, Product } from '@/lib/db';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useEffect, useState, useRef } from 'react';
 import Autoplay from "embla-carousel-autoplay";
+import useEmblaCarousel from 'embla-carousel-react'
 
 const heroImages = [
     {
@@ -42,24 +43,18 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  const plugin = useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: false, stopOnMouseEnter: true })
-  );
+  const [emblaRef] = useEmblaCarousel({ loop: true }, [
+    Autoplay({ delay: 2000, stopOnInteraction: false }),
+  ]);
 
   return (
       <main>
         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white overflow-hidden">
              <div className="absolute inset-0 -z-10 brightness-50">
-                <Carousel
-                  plugins={[plugin.current]}
-                  className="w-full h-full"
-                  opts={{
-                    loop: true,
-                  }}
-                >
-                    <CarouselContent>
+                <div className="overflow-hidden h-full" ref={emblaRef}>
+                    <div className="flex h-full">
                         {heroImages.map((image, index) => (
-                           <CarouselItem key={index}>
+                           <div className="relative flex-[0_0_100%] h-full" key={index}>
                                 <Image
                                     src={image.src}
                                     alt={image.alt}
@@ -68,10 +63,10 @@ export default function Home() {
                                     priority={index === 0}
                                     data-ai-hint={image.aiHint}
                                 />
-                           </CarouselItem>
+                           </div>
                         ))}
-                    </CarouselContent>
-                </Carousel>
+                    </div>
+                </div>
              </div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight animate-fade-in-down">
@@ -240,5 +235,3 @@ function ProductCard({ product }: { product: Product }) {
         </Card>
     )
 }
-
-    
