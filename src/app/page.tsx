@@ -1,4 +1,6 @@
 
+"use client";
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -6,22 +8,71 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Brush, Zap, LineChart, MessageCircle, Mic, Bot, ArrowRight } from 'lucide-react';
 import { getProducts, Product } from '@/lib/db';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useEffect, useState, useRef } from 'react';
+import Autoplay from "embla-carousel-autoplay";
 
-export default async function Home() {
-  const allProducts = await getProducts();
-  const featuredProducts = allProducts.filter(p => p.status === 'Active').slice(0, 6);
+
+export default function Home() {
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const plugin = useRef(
+      Autoplay({ delay: 1000, stopOnInteraction: false, stopOnMouseEnter: false })
+    );
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const prods = await getProducts();
+      setAllProducts(prods);
+      setFeaturedProducts(prods.filter(p => p.status === 'Active').slice(0, 6));
+    }
+    fetchProducts();
+  }, []);
 
   return (
       <main>
-        <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white">
-          <Image
-            src="https://picsum.photos/seed/living-art/1600/900"
-            alt="Artisan's hands working on a craft"
-            fill
-            className="object-cover -z-10 brightness-50"
-            data-ai-hint="dynamic art"
-            priority
-          />
+        <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white overflow-hidden">
+             <div className="absolute inset-0 -z-10 brightness-50">
+                 <Carousel
+                    plugins={[plugin.current]}
+                    className="w-full h-full"
+                    opts={{
+                        loop: true,
+                    }}
+                    onMouseEnter={plugin.current.stop}
+                    onMouseLeave={plugin.current.reset}
+                >
+                    <CarouselContent className="h-full">
+                        <CarouselItem className="h-full">
+                             <Image
+                                src="https://picsum.photos/seed/living-art/1600/900"
+                                alt="Artisan's hands working on a craft"
+                                fill
+                                className="object-cover"
+                                priority
+                                data-ai-hint="dynamic art"
+                              />
+                        </CarouselItem>
+                        <CarouselItem>
+                             <Image
+                                src="https://picsum.photos/seed/culture-rich/1600/900"
+                                alt="Vibrant cultural fabric"
+                                fill
+                                className="object-cover"
+                                data-ai-hint="vibrant fabric"
+                              />
+                        </CarouselItem>
+                         <CarouselItem>
+                             <Image
+                                src="https://picsum.photos/seed/pottery-making/1600/900"
+                                alt="Potter shaping clay"
+                                fill
+                                className="object-cover"
+                                data-ai-hint="pottery making"
+                              />
+                        </CarouselItem>
+                    </CarouselContent>
+                </Carousel>
+             </div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight animate-fade-in-down">
               Empowering Artisans,
@@ -124,12 +175,12 @@ export default async function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
               <Image
-                src="https://picsum.photos/seed/vibrant-art/600/500"
-                alt="Indian Heritage Art"
+                src="https://m.media-amazon.com/images/I/81p5+e4-4+L._SX679_.jpg"
+                alt="Modern Art Canvas Painting"
                 width={600}
                 height={500}
                 className="rounded-lg shadow-xl"
-                data-ai-hint="vibrant art"
+                data-ai-hint="modern art"
               />
             </div>
             <div className="text-left animate-fade-in-up">
