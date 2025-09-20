@@ -13,6 +13,11 @@ import Autoplay from "embla-carousel-autoplay";
 
 const heroImages = [
     {
+        src: "https://m.media-amazon.com/images/I/910AD6dqhXL.jpg",
+        alt: "Modern abstract painting",
+        aiHint: "modern abstract"
+    },
+    {
         src: "https://5.imimg.com/data5/SELLER/Default/2023/2/KH/VP/WT/9107407/digital-art-wall-painting-for-home-nature-landscape-forest-painting.jpg",
         alt: "Forest landscape painting",
         aiHint: "forest painting"
@@ -21,11 +26,6 @@ const heroImages = [
         src: "https://5.imimg.com/data5/SELLER/Default/2023/2/SD/UG/OS/9107407/abstract-wall-painting-for-home-city-by-the-lake.jpg",
         alt: "Abstract city landscape painting",
         aiHint: "abstract city"
-    },
-    {
-        src: "https://m.media-amazon.com/images/I/910AD6dqhXL.jpg",
-        alt: "Modern abstract painting",
-        aiHint: "modern abstract"
     }
 ];
 
@@ -43,7 +43,7 @@ export default function Home() {
   }, []);
 
   const plugin = useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: false, stopOnMouseEnter: false })
+    Autoplay({ delay: 2000, stopOnInteraction: false, stopOnMouseEnter: true })
   );
 
   return (
@@ -240,3 +240,5 @@ function ProductCard({ product }: { product: Product }) {
         </Card>
     )
 }
+
+    
