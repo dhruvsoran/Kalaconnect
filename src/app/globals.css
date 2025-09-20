@@ -67,7 +67,7 @@
     @apply border-border;
   }
   html {
-    @apply text-base; /* was text-sm */
+    @apply text-lg;
   }
   body {
     @apply bg-background text-foreground;
