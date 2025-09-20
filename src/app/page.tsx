@@ -8,19 +8,30 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Brush, Zap, LineChart, MessageCircle, Mic, Bot, ArrowRight } from 'lucide-react';
 import { getProducts, Product } from '@/lib/db';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { useEffect, useState, useRef } from 'react';
-import type { CarouselApi } from "@/components/ui/carousel"
-import Autoplay from "embla-carousel-autoplay";
+import { useEffect, useState } from 'react';
 
+const heroImages = [
+    {
+        src: "https://5.imimg.com/data5/SELLER/Default/2023/2/KH/VP/WT/9107407/digital-art-wall-painting-for-home-nature-landscape-forest-painting.jpg",
+        alt: "Forest landscape painting",
+        aiHint: "forest painting"
+    },
+    {
+        src: "https://5.imimg.com/data5/SELLER/Default/2023/2/SD/UG/OS/9107407/abstract-wall-painting-for-home-city-by-the-lake.jpg",
+        alt: "Abstract city landscape painting",
+        aiHint: "abstract city"
+    },
+    {
+        src: "https://m.media-amazon.com/images/I/910AD6dqhXL.jpg",
+        alt: "Modern abstract painting",
+        aiHint: "modern abstract"
+    }
+];
 
 export default function Home() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   
-  const plugin = useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: false, stopOnMouseEnter: false })
-  );
- 
   useEffect(() => {
     async function fetchProducts() {
       const prods = await getProducts();
@@ -34,46 +45,22 @@ export default function Home() {
       <main>
         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white overflow-hidden">
              <div className="absolute inset-0 -z-10 brightness-50">
-                 <Carousel
-                    plugins={[plugin.current]}
-                    className="w-full h-full"
-                    opts={{
-                        loop: true,
-                    }}
-                >
-                    <CarouselContent className="h-full">
-                        <CarouselItem className="h-full">
-                             <Image
-                                src="https://5.imimg.com/data5/SELLER/Default/2023/2/KH/VP/WT/9107407/digital-art-wall-painting-for-home-nature-landscape-forest-painting.jpg"
-                                alt="Forest landscape painting"
-                                fill
-                                className="object-cover"
-                                priority
-                                data-ai-hint="forest painting"
-                              />
-                        </CarouselItem>
-                        <CarouselItem>
-                             <Image
-                                src="https://5.imimg.com/data5/SELLER/Default/2023/2/SD/UG/OS/9107407/abstract-wall-painting-for-home-city-by-the-lake.jpg"
-                                alt="Abstract city landscape painting"
-                                fill
-                                className="object-cover"
-                                data-ai-hint="abstract city"
-                              />
-                        </CarouselItem>
-                         <CarouselItem>
-                             <Image
-                                src="https://m.media-amazon.com/images/I/910AD6dqhXL.jpg"
-                                alt="Modern abstract painting"
-                                fill
-                                className="object-cover"
-                                data-ai-hint="modern abstract"
-                              />
-                        </CarouselItem>
-                    </CarouselContent>
-                </Carousel>
+                <div className="w-full h-full">
+                    {heroImages.map((image, index) => (
+                         <Image
+                            key={index}
+                            src={image.src}
+                            alt={image.alt}
+                            fill
+                            className="object-cover w-full h-full animate-fade-in-out"
+                            style={{ animationDelay: `${index * 4}s`, zIndex: -10 - index }}
+                            priority={index === 0}
+                            data-ai-hint={image.aiHint}
+                          />
+                    ))}
+                </div>
              </div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight animate-fade-in-down">
               Empowering Artisans,
               <br />
