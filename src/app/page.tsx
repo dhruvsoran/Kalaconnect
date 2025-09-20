@@ -8,7 +8,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Brush, Zap, LineChart, MessageCircle, Mic, Bot, ArrowRight } from 'lucide-react';
 import { getProducts, Product } from '@/lib/db';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import Autoplay from "embla-carousel-autoplay";
 
 const heroImages = [
     {
@@ -41,24 +42,36 @@ export default function Home() {
     fetchProducts();
   }, []);
 
+  const plugin = useRef(
+    Autoplay({ delay: 2000, stopOnInteraction: false, stopOnMouseEnter: true })
+  );
+
   return (
       <main>
         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white overflow-hidden">
              <div className="absolute inset-0 -z-10 brightness-50">
-                <div className="w-full h-full">
-                    {heroImages.map((image, index) => (
-                         <Image
-                            key={index}
-                            src={image.src}
-                            alt={image.alt}
-                            fill
-                            className="object-cover w-full h-full animate-fade-in-out opacity-0"
-                            style={{ animationDelay: `${index * 3}s`, zIndex: -10 - index }}
-                            priority={index === 0}
-                            data-ai-hint={image.aiHint}
-                          />
-                    ))}
-                </div>
+                <Carousel
+                  plugins={[plugin.current]}
+                  className="w-full h-full"
+                  opts={{
+                    loop: true,
+                  }}
+                >
+                    <CarouselContent>
+                        {heroImages.map((image, index) => (
+                           <CarouselItem key={index}>
+                                <Image
+                                    src={image.src}
+                                    alt={image.alt}
+                                    fill
+                                    className="object-cover w-full h-full"
+                                    priority={index === 0}
+                                    data-ai-hint={image.aiHint}
+                                />
+                           </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                </Carousel>
              </div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight animate-fade-in-down">
@@ -227,3 +240,5 @@ function ProductCard({ product }: { product: Product }) {
         </Card>
     )
 }
+
+    

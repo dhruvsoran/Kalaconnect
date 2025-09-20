@@ -112,13 +112,6 @@ export default {
           '0%, 100%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(1.05)' },
         },
-        'fade-in-out': {
-          '0%': { opacity: 0 },
-          '11%': { opacity: 1 }, /* Start fade in */
-          '33%': { opacity: 1 }, /* Finish fade in, visible for 2s */
-          '44%': { opacity: 0 }, /* Start fade out */
-          '100%': { opacity: 0 },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -127,9 +120,10 @@ export default {
         'fade-in-down': 'fade-in-down 0.5s ease-in-out',
         'fade-in-up': 'fade-in-up 0.5s ease-in-out',
         'pop': 'pop 0.2s ease-out',
-        'fade-in-out': 'fade-in-out 9s infinite',
       },
     },
   },
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;
+
+    
