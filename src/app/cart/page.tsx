@@ -21,14 +21,24 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 export default function CartPage() {
     const [cart, setCart] = useState<Product[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
+    const router = useRouter();
 
     useEffect(() => {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (!isLoggedIn) {
+            router.push('/login');
+            return;
+        }
+
         async function fetchProducts() {
             const allProducts = await getProducts();
             setProducts(allProducts);
@@ -43,9 +53,11 @@ export default function CartPage() {
             setCart(updatedCart);
         };
         window.addEventListener('cartUpdated', handleCartUpdate);
+        setIsLoading(false);
+
         return () => window.removeEventListener('cartUpdated', handleCartUpdate);
 
-    }, []);
+    }, [router]);
 
     const removeFromCart = (productName: string) => {
         const newCart = cart.filter(item => item.name !== productName);
@@ -64,6 +76,22 @@ export default function CartPage() {
              return total + price;
         }, 0);
     };
+
+    if (isLoading) {
+        return (
+            <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <Card>
+                    <CardHeader>
+                        <Skeleton className="h-8 w-72" />
+                        <Skeleton className="h-4 w-96" />
+                    </CardHeader>
+                    <CardContent>
+                        <Skeleton className="h-40 w-full" />
+                    </CardContent>
+                </Card>
+            </main>
+        );
+    }
 
     return (
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">

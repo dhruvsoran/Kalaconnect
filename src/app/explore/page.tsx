@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { getProducts, Product } from '@/lib/db';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export default function ExplorePage() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -57,8 +58,28 @@ export default function ExplorePage() {
 
 function ProductCard({ product }: { product: Product }) {
     const { toast } = useToast();
+    const router = useRouter();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
+    }, []);
 
     const handleAddToCart = () => {
+        if (!isLoggedIn) {
+            toast({
+                variant: "destructive",
+                title: "Authentication Required",
+                description: "Please log in to add items to your cart.",
+                action: (
+                    <Button variant="outline" size="sm" onClick={() => router.push('/login')}>
+                        Login
+                    </Button>
+                ),
+            });
+            return;
+        }
+
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
         const isProductInCart = cart.some((item: Product) => item.name === product.name);
 

@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -13,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreditCard, Landmark, QrCode } from "lucide-react";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const checkoutSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -61,6 +63,16 @@ const checkoutSchema = z.object({
 export default function CheckoutPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+        router.push('/login');
+    } else {
+        setIsLoading(false);
+    }
+  }, [router]);
 
   const form = useForm<z.infer<typeof checkoutSchema>>({
     resolver: zodResolver(checkoutSchema),
@@ -89,6 +101,26 @@ export default function CheckoutPage() {
     localStorage.removeItem('cart');
     window.dispatchEvent(new Event('cartUpdated'));
     router.push("/order-confirmation");
+  }
+
+  if (isLoading) {
+    return (
+        <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex justify-center items-start">
+             <Card className="w-full max-w-2xl">
+                <CardHeader>
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="h-4 w-96" />
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-8">
+                        <Skeleton className="h-40 w-full" />
+                        <Skeleton className="h-64 w-full" />
+                        <Skeleton className="h-11 w-full" />
+                    </div>
+                </CardContent>
+            </Card>
+        </main>
+    )
   }
 
   return (
