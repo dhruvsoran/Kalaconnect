@@ -52,8 +52,8 @@ export default function Home() {
                             src={image.src}
                             alt={image.alt}
                             fill
-                            className="object-cover w-full h-full animate-fade-in-out"
-                            style={{ animationDelay: `${index * 4}s`, zIndex: -10 - index }}
+                            className="object-cover w-full h-full animate-fade-in-out opacity-0"
+                            style={{ animationDelay: `${index * 3}s`, zIndex: -10 - index }}
                             priority={index === 0}
                             data-ai-hint={image.aiHint}
                           />
