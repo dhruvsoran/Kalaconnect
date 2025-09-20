@@ -45,7 +45,7 @@ export default function Home() {
                         <CarouselItem className="h-full">
                              <Image
                                 src="https://5.imimg.com/data5/SELLER/Default/2023/2/KH/VP/WT/9107407/digital-art-wall-painting-for-home-nature-landscape-forest-painting-1000x1000.jpg"
-                                alt="Artisan's hands working on a craft"
+                                alt="Forest landscape painting"
                                 fill
                                 className="object-cover"
                                 priority
@@ -54,11 +54,11 @@ export default function Home() {
                         </CarouselItem>
                         <CarouselItem>
                              <Image
-                                src="https://picsum.photos/seed/culture-rich/1600/900"
-                                alt="Vibrant cultural fabric"
+                                src="https://5.imimg.com/data5/SELLER/Default/2023/2/SD/UG/OS/9107407/abstract-wall-painting-for-home-city-by-the-lake.jpg"
+                                alt="Abstract city landscape painting"
                                 fill
                                 className="object-cover"
-                                data-ai-hint="vibrant fabric"
+                                data-ai-hint="abstract city"
                               />
                         </CarouselItem>
                          <CarouselItem>
