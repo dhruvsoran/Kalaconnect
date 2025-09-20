@@ -16,7 +16,7 @@ export default function Home() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const plugin = useRef(
-      Autoplay({ delay: 1000, stopOnInteraction: false, stopOnMouseEnter: false })
+      Autoplay({ delay: 4000, stopOnInteraction: true, stopOnMouseEnter: true })
     );
 
   useEffect(() => {
@@ -44,12 +44,12 @@ export default function Home() {
                     <CarouselContent className="h-full">
                         <CarouselItem className="h-full">
                              <Image
-                                src="https://picsum.photos/seed/living-art/1600/900"
+                                src="https://5.imimg.com/data5/SELLER/Default/2023/2/KH/VP/WT/9107407/digital-art-wall-painting-for-home-nature-landscape-forest-painting-1000x1000.jpg"
                                 alt="Artisan's hands working on a craft"
                                 fill
                                 className="object-cover"
                                 priority
-                                data-ai-hint="dynamic art"
+                                data-ai-hint="forest painting"
                               />
                         </CarouselItem>
                         <CarouselItem>
