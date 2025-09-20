@@ -13,16 +13,27 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useEffect, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getProfile, Profile } from '@/lib/db';
+import { Skeleton } from './ui/skeleton';
 
 export function UserMenu() {
     const router = useRouter();
-    const [userRole, setUserRole] = useState<string | null>(null);
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const role = localStorage.getItem('userRole');
-            setUserRole(role);
+        async function loadProfile() {
+            try {
+                const data = await getProfile();
+                setProfile(data);
+            } catch (error) {
+                console.error("Failed to load profile for menu", error);
+            } finally {
+                setIsLoading(false);
+            }
         }
+        loadProfile();
     }, []);
 
     const handleLogout = () => {
@@ -33,12 +44,18 @@ export function UserMenu() {
         router.push('/');
     };
 
+    if (isLoading) {
+        return <Skeleton className="h-8 w-8 rounded-full" />;
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <User className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                 <Avatar className="h-9 w-9">
+                    {profile?.avatar && <AvatarImage src={profile.avatar} alt={profile.name} />}
+                    <AvatarFallback>{profile?.name?.[0].toUpperCase()}</AvatarFallback>
+                </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
