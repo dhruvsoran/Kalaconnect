@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,18 +17,21 @@ import { saveProfileAction } from "@/lib/actions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Upload } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const artisanProfileSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
     location: z.string().min(2, "Location is required."),
     story: z.string().min(10, "Your story should be at least 10 characters."),
-    heritage: z.string().min(10, "Cultural heritage should be at least 10 characters.")
+    heritage: z.string().min(10, "Cultural heritage should be at least 10 characters."),
+    avatar: z.string().optional(),
 });
 
 const buyerProfileSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
     location: z.string().min(2, "Location is required."),
+    avatar: z.string().optional(),
 });
 
 
@@ -76,10 +80,26 @@ export default function ProfilePage() {
 
 function ArtisanProfileForm({ initialData }: { initialData: Profile }) {
     const { toast } = useToast();
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(initialData.avatar || null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     const form = useForm<Profile>({
         resolver: zodResolver(artisanProfileSchema),
         defaultValues: initialData,
     });
+    
+    const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const result = reader.result as string;
+                setAvatarPreview(result);
+                form.setValue("avatar", result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
     
     const handleSaveChanges = async (data: Profile) => {
         try {
@@ -102,37 +122,68 @@ function ArtisanProfileForm({ initialData }: { initialData: Profile }) {
             <div className="flex items-center">
                 <h1 className="text-lg font-semibold md:text-2xl font-headline">Artisan Profile</h1>
             </div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Your Story</CardTitle>
-                    <CardDescription>
-                        This information helps customers connect with you and your craft.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(handleSaveChanges)} className="grid gap-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <FormField control={form.control} name="name" render={({ field }) => (
-                                    <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+             <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleSaveChanges)} className="grid gap-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Profile Picture</CardTitle>
+                             <CardDescription>
+                                Upload a photo of yourself or your brand logo.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                             <div className="flex items-center gap-6">
+                                <Avatar className="h-24 w-24">
+                                    <AvatarImage src={avatarPreview || undefined} alt={initialData.name} />
+                                    <AvatarFallback>{initialData.name?.[0]}</AvatarFallback>
+                                </Avatar>
+                                <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                                    <Upload className="mr-2 h-4 w-4" />
+                                    Upload Photo
+                                </Button>
+                                <Input 
+                                    type="file" 
+                                    className="hidden" 
+                                    ref={fileInputRef} 
+                                    onChange={handleAvatarChange}
+                                    accept="image/*"
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Your Story</CardTitle>
+                            <CardDescription>
+                                This information helps customers connect with you and your craft.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <FormField control={form.control} name="name" render={({ field }) => (
+                                        <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="location" render={({ field }) => (
+                                        <FormItem><FormLabel>Location</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                    )} />
+                                </div>
+                                <FormField control={form.control} name="story" render={({ field }) => (
+                                    <FormItem><FormLabel>Your Story / Bio</FormLabel><FormControl><Textarea className="min-h-32" {...field} /></FormControl><FormMessage /></FormItem>
                                 )} />
-                                <FormField control={form.control} name="location" render={({ field }) => (
-                                    <FormItem><FormLabel>Location</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormField control={form.control} name="heritage" render={({ field }) => (
+                                    <FormItem><FormLabel>Cultural Heritage</FormLabel><FormControl><Textarea className="min-h-24" {...field} /></FormControl><FormMessage /></FormItem>
                                 )} />
                             </div>
-                            <FormField control={form.control} name="story" render={({ field }) => (
-                                <FormItem><FormLabel>Your Story / Bio</FormLabel><FormControl><Textarea className="min-h-32" {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                            <FormField control={form.control} name="heritage" render={({ field }) => (
-                                <FormItem><FormLabel>Cultural Heritage</FormLabel><FormControl><Textarea className="min-h-24" {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                            <Button type="submit" className="w-fit" disabled={form.formState.isSubmitting}>
-                                {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
-                            </Button>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
+                        </CardContent>
+                    </Card>
+                    <div className="flex justify-end">
+                        <Button type="submit" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
+                        </Button>
+                    </div>
+                </form>
+            </Form>
         </div>
     )
 }
@@ -215,6 +266,20 @@ function ProfileSkeleton({ isArtisan }: { isArtisan: boolean }) {
             <div className="flex items-center">
                 <h1 className="text-lg font-semibold md:text-2xl font-headline">My Profile</h1>
             </div>
+            {isArtisan && (
+                 <Card>
+                    <CardHeader>
+                        <CardTitle><Skeleton className="h-8 w-48" /></CardTitle>
+                        <CardDescription><Skeleton className="h-4 w-72" /></CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex items-center gap-6">
+                            <Skeleton className="h-24 w-24 rounded-full" />
+                            <Skeleton className="h-10 w-32" />
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
             <Card>
                 <CardHeader>
                     <CardTitle><Skeleton className="h-8 w-48" /></CardTitle>

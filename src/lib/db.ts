@@ -29,6 +29,7 @@ export interface Profile {
     location: string;
     story: string;
     heritage: string;
+    avatar?: string;
 }
 
 // Initial data if the file doesn't exist
@@ -139,7 +140,8 @@ const initialData: DbData = {
         name: "Ravi Kumar",
         location: "Jaipur, Rajasthan",
         story: "I am a third-generation block-printer from Jaipur, keeping the traditions of my family alive through vibrant textiles...",
-        heritage: "Sanganeri block-printing is a traditional art form from Rajasthan, known for its delicate floral patterns and use of natural dyes."
+        heritage: "Sanganeri block-printing is a traditional art form from Rajasthan, known for its delicate floral patterns and use of natural dyes.",
+        avatar: "https://picsum.photos/seed/artisan-profile/200/200"
     }
 };
 
