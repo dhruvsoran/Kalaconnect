@@ -17,17 +17,10 @@ export default function Home() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   
-  const [api, setApi] = useState<CarouselApi>()
   const plugin = useRef(
-      Autoplay({ delay: 2000, stopOnInteraction: true })
-    );
+    Autoplay({ delay: 2000, stopOnInteraction: false, stopOnMouseEnter: false })
+  );
  
-  useEffect(() => {
-    if (!api) {
-      return
-    }
-  }, [api])
-
   useEffect(() => {
     async function fetchProducts() {
       const prods = await getProducts();
@@ -42,14 +35,11 @@ export default function Home() {
         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white overflow-hidden">
              <div className="absolute inset-0 -z-10 brightness-50">
                  <Carousel
-                    setApi={setApi}
                     plugins={[plugin.current]}
                     className="w-full h-full"
                     opts={{
                         loop: true,
                     }}
-                    onMouseEnter={plugin.current.stop}
-                    onMouseLeave={plugin.current.reset}
                 >
                     <CarouselContent className="h-full">
                         <CarouselItem className="h-full">
