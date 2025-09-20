@@ -9,15 +9,24 @@ import { Brush, Zap, LineChart, MessageCircle, Mic, Bot, ArrowRight } from 'luci
 import { getProducts, Product } from '@/lib/db';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useEffect, useState, useRef } from 'react';
+import type { CarouselApi } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay";
 
 
 export default function Home() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  
+  const [api, setApi] = useState<CarouselApi>()
   const plugin = useRef(
-      Autoplay({ delay: 4000, stopOnInteraction: true, stopOnMouseEnter: true })
+      Autoplay({ delay: 2000, stopOnInteraction: true })
     );
+ 
+  useEffect(() => {
+    if (!api) {
+      return
+    }
+  }, [api])
 
   useEffect(() => {
     async function fetchProducts() {
@@ -33,6 +42,7 @@ export default function Home() {
         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white overflow-hidden">
              <div className="absolute inset-0 -z-10 brightness-50">
                  <Carousel
+                    setApi={setApi}
                     plugins={[plugin.current]}
                     className="w-full h-full"
                     opts={{
@@ -240,3 +250,5 @@ function ProductCard({ product }: { product: Product }) {
         </Card>
     )
 }
+
+    
