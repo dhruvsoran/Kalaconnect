@@ -175,7 +175,7 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
               <Image
-                src="https://m.media-amazon.com/images/I/81p5+e4-4+L._SX679_.jpg"
+                src="https://m.media-amazon.com/images/I/81gi8NfPpIL.jpg"
                 alt="Modern Art Canvas Painting"
                 width={600}
                 height={500}
