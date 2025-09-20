@@ -72,7 +72,8 @@ export default function CartPage() {
 
     const getSubtotal = () => {
         return cart.reduce((total, item) => {
-             const price = parseFloat(item.price.replace(/[^0-9.-]+/g,""));
+             const priceString = item.price.replace(/[^0-9.]+/g, "");
+             const price = parseFloat(priceString);
              return total + price;
         }, 0);
     };
