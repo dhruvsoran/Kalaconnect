@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import Image from "next/image"
@@ -188,7 +189,9 @@ function ProductTable({ products, onDelete }: { products: Product[], onDelete: (
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={`/dashboard/products/edit/${encodeURIComponent(product.name)}`}>Edit</Link>
+                          </DropdownMenuItem>
                           <AlertDialogTrigger asChild>
                             <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>Delete</DropdownMenuItem>
                           </AlertDialogTrigger>

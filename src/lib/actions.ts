@@ -4,7 +4,7 @@
 import { generateProductDescription, GenerateProductDescriptionInput } from "@/ai/flows/generate-product-descriptions";
 import { createMarketingContent, CreateMarketingContentInput } from "@/ai/flows/create-marketing-content";
 import { getChatbotAssistance, GetChatbotAssistanceInput } from "@/ai/flows/get-chatbot-assistance";
-import { addProduct, deleteProduct as deleteProductDb, Profile, Product, saveProfile as saveProfileDb } from "@/lib/db";
+import { addProduct, deleteProduct as deleteProductDb, Profile, Product, saveProfile as saveProfileDb, updateProduct } from "@/lib/db";
 import { VisualizeProductInRoomInput, visualizeProductInRoom } from "@/ai/flows/visualize-product-in-room";
 import { revalidatePath } from "next/cache";
 
@@ -50,13 +50,26 @@ export async function saveProductAction(productData: {
     stock: number;
     image: string;
     aiHint: string;
+    status: Product['status'];
+    isEditing: boolean;
+    originalName?: string;
 }) {
     try {
-        const newProduct: Omit<Product, 'date'> = {
-            ...productData,
-            status: 'Draft',
-        };
-        const savedProduct = await addProduct(newProduct);
+        const { isEditing, originalName, ...newProductData } = productData;
+        
+        let savedProduct;
+
+        if (isEditing) {
+            if (!originalName) {
+                 return { error: "Original product name is required for editing." };
+            }
+            const productToUpdate: Omit<Product, 'date'> = { ...newProductData };
+            savedProduct = await updateProduct(originalName, productToUpdate);
+        } else {
+            const productToAdd: Omit<Product, 'date'> = { ...newProductData };
+            savedProduct = await addProduct(productToAdd);
+        }
+        
         revalidatePath('/dashboard/products');
         return { success: true, product: savedProduct };
     } catch (error) {

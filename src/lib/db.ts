@@ -186,6 +186,24 @@ export async function addProduct(product: Omit<Product, 'date'>): Promise<Produc
     return newProduct;
 }
 
+export async function updateProduct(originalName: string, productUpdate: Omit<Product, 'date'>): Promise<Product> {
+    const db = await readDb();
+    const productIndex = db.products.findIndex(p => p.name === originalName);
+
+    if (productIndex === -1) {
+        throw new Error("Product not found");
+    }
+
+    const updatedProduct = {
+        ...db.products[productIndex],
+        ...productUpdate,
+    };
+
+    db.products[productIndex] = updatedProduct;
+    await writeDb(db);
+    return updatedProduct;
+}
+
 export async function deleteProduct(productName: string): Promise<{ success: boolean }> {
     const db = await readDb();
     const initialLength = db.products.length;

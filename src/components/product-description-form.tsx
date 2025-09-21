@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { generateProductDescriptionAction, saveProductAction } from "@/lib/actions";
 import { cn } from "@/lib/utils";
+import type { Product } from "@/lib/db";
 
 const formSchema = z.object({
     productName: z.string().min(3, "Product name must be at least 3 characters."),
@@ -27,9 +28,10 @@ const formSchema = z.object({
     productMaterials: z.string().min(3, "Please list the materials."),
     productDimensions: z.string().min(2, "Dimensions are required."),
     productRegion: z.string().min(2, "Region is required."),
-    productImage: z.any().refine(file => file instanceof File, "Product image is required."),
+    productImage: z.any().refine(file => file instanceof File || typeof file === 'string', "Product image is required."),
     price: z.string().min(1, "Price is required."),
     stock: z.coerce.number().min(0, "Stock cannot be negative."),
+    status: z.enum(['Active', 'Draft', 'Archived']),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -40,11 +42,15 @@ type VoiceInputState = {
     targetField: keyof FormValues | "price";
 };
 
-export function ProductDescriptionForm() {
+interface ProductDescriptionFormProps {
+  product?: Product | null;
+}
+
+export function ProductDescriptionForm({ product }: ProductDescriptionFormProps) {
     const [isGenerating, setIsGenerating] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const [generatedDescription, setGeneratedDescription] = useState("");
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [generatedDescription, setGeneratedDescription] = useState(product?.description || "");
+    const [imagePreview, setImagePreview] = useState<string | null>(product?.image || null);
     const [currency, setCurrency] = useState("₹");
     const [amount, setAmount] = useState("");
     const { toast } = useToast();
@@ -57,20 +63,40 @@ export function ProductDescriptionForm() {
     });
     const recognitionRef = useRef<any>(null);
 
+    const isEditMode = !!product;
+
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            productName: "",
-            artisanCulture: "",
-            craftTechniques: "",
-            productMaterials: "",
+            productName: product?.name || "",
+            artisanCulture: "", // These fields are not in the product model
+            craftTechniques: product?.aiHint.split(' ')[1] || "",
+            productMaterials: product?.aiHint.split(' ')[0] || "",
             productDimensions: "",
             productRegion: "",
-            price: "",
-            stock: 0,
+            price: product?.price || "",
+            stock: product?.stock || 0,
+            productImage: product?.image || undefined,
+            status: product?.status || 'Draft',
         },
     });
+
+     useEffect(() => {
+        if (product) {
+            setGeneratedDescription(product.description);
+            setImagePreview(product.image);
+
+            const priceMatch = product.price.match(/([₹$€])(\d+\.?\d*)/);
+            if (priceMatch) {
+                setCurrency(priceMatch[1]);
+                setAmount(priceMatch[2]);
+            } else {
+                setAmount(product.price.replace(/[^0-9.]+/g, ""));
+            }
+        }
+    }, [product]);
+
     
     const handlePriceChange = (newAmount: string) => {
         setAmount(newAmount);
@@ -144,7 +170,7 @@ export function ProductDescriptionForm() {
         
         const data = form.getValues();
 
-        if(!generatedDescription) {
+        if(!isEditMode && !generatedDescription) {
              toast({
                 variant: "destructive",
                 title: "Cannot Save",
@@ -167,11 +193,14 @@ export function ProductDescriptionForm() {
         try {
             const result = await saveProductAction({
                 name: data.productName,
-                description: generatedDescription,
+                description: generatedDescription || product?.description || '',
                 price: data.price,
                 stock: data.stock,
+                status: data.status,
                 image: imagePreview,
-                aiHint: `${data.productMaterials} ${data.craftTechniques}`.toLowerCase()
+                aiHint: `${data.productMaterials} ${data.craftTechniques}`.toLowerCase(),
+                isEditing: isEditMode,
+                originalName: product?.name,
             });
 
             if (result.error) {
@@ -179,8 +208,8 @@ export function ProductDescriptionForm() {
             }
 
             toast({
-                title: "Product Saved!",
-                description: `"${data.productName}" has been added to your inventory.`,
+                title: `Product ${isEditMode ? 'Updated' : 'Saved'}!`,
+                description: `"${data.productName}" has been successfully ${isEditMode ? 'updated' : 'added'}.`,
             });
             
             router.push('/dashboard/products');
@@ -364,6 +393,30 @@ export function ProductDescriptionForm() {
                                     <FormMessage />
                                 </FormItem>
                             )} />
+                             {isEditMode && (
+                                <FormField
+                                    control={form.control}
+                                    name="status"
+                                    render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Status</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                <SelectValue placeholder="Select product status" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="Active">Active</SelectItem>
+                                                <SelectItem value="Draft">Draft</SelectItem>
+                                                <SelectItem value="Archived">Archived</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                            )}
                         </CardContent>
                     </Card>
                 </div>
