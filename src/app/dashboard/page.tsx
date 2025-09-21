@@ -34,7 +34,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -66,13 +65,13 @@ function ArtisanDashboard() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2"><DollarSign className="h-5 w-5" />Total Revenue</DialogTitle>
-              <DialogDescription>
-                <div className="text-4xl font-bold mt-4">₹45,231.89</div>
+            </DialogHeader>
+            <div className="mt-4">
+                <div className="text-4xl font-bold">₹45,231.89</div>
                 <p className="text-sm text-muted-foreground mt-2">
                   +20.1% from last month
                 </p>
-              </DialogDescription>
-            </DialogHeader>
+            </div>
           </DialogContent>
         </Dialog>
         <Dialog>
@@ -93,13 +92,13 @@ function ArtisanDashboard() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5" />Sales</DialogTitle>
-              <DialogDescription>
-                 <div className="text-4xl font-bold mt-4">+12,234</div>
+            </DialogHeader>
+            <div className="mt-4">
+                <div className="text-4xl font-bold">+12,234</div>
                 <p className="text-sm text-muted-foreground mt-2">
                   +19% from last month
                 </p>
-              </DialogDescription>
-            </DialogHeader>
+            </div>
           </DialogContent>
         </Dialog>
         <Dialog>
@@ -120,13 +119,13 @@ function ArtisanDashboard() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2"><Users className="h-5 w-5" />New Customers</DialogTitle>
-              <DialogDescription>
-                <div className="text-4xl font-bold mt-4">+235</div>
+            </DialogHeader>
+            <div className="mt-4">
+                <div className="text-4xl font-bold">+235</div>
                 <p className="text-sm text-muted-foreground mt-2">
                   +180.1% from last month
                 </p>
-              </DialogDescription>
-            </DialogHeader>
+            </div>
           </DialogContent>
         </Dialog>
         <Dialog>
@@ -145,13 +144,13 @@ function ArtisanDashboard() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2"><Activity className="h-5 w-5" />Profile Views</DialogTitle>
-              <DialogDescription>
-                <div className="text-4xl font-bold mt-4">+573</div>
+            </DialogHeader>
+             <div className="mt-4">
+                <div className="text-4xl font-bold">+573</div>
                 <p className="text-sm text-muted-foreground mt-2">
                   +201 since last hour
                 </p>
-              </DialogDescription>
-            </DialogHeader>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
