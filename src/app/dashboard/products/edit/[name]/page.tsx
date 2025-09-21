@@ -68,4 +68,3 @@ export default function EditProductPage({ params }: { params: { name: string } }
         </div>
     );
 }
-
