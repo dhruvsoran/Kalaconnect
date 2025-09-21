@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, Loader2, Sparkles, Save, Mic, Waves } from "lucide-react";
+import { Upload, Loader2, Sparkles, Save, Mic, Waves, Info } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
 
@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { generateProductDescriptionAction, saveProductAction } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/lib/db";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const formSchema = z.object({
     productName: z.string().min(3, "Product name must be at least 3 characters."),
@@ -356,7 +357,7 @@ export function ProductDescriptionForm({ product }: ProductDescriptionFormProps)
                              <div className="grid grid-cols-2 gap-4">
                                 <FormField control={form.control} name="price" render={() => (
                                      <FormItem>
-                                        <FormLabel>Price</FormLabel>
+                                        <FormLabel>Your Price</FormLabel>
                                         <div className="flex gap-2">
                                             <Select value={currency} onValueChange={handleCurrencyChange}>
                                                 <SelectTrigger className="w-[80px]">
@@ -386,6 +387,13 @@ export function ProductDescriptionForm({ product }: ProductDescriptionFormProps)
                                     </FormItem>
                                 )} />
                             </div>
+                            <Alert>
+                                <Info className="h-4 w-4" />
+                                <AlertTitle>Heads Up!</AlertTitle>
+                                <AlertDescription>
+                                    KalaConnect applies a 15% commission on the final sale price. Please price your items accordingly.
+                                </AlertDescription>
+                            </Alert>
                             <FormField control={form.control} name="productRegion" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Region of Origin</FormLabel>
