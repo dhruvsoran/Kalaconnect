@@ -17,7 +17,7 @@ export default function EditProductPage({ params }: { params: { name: string } }
     
     useEffect(() => {
         async function fetchProduct() {
-            const { name: encodedName } = params;
+            const encodedName = params.name;
             if (!encodedName) {
                 setLoading(false);
                 setError("Product name not found in URL.");
