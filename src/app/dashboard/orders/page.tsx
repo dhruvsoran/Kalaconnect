@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ListOrdered, Package, Truck, CheckCircle } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Order = {
     id: string;
@@ -51,6 +52,7 @@ const statusConfig = {
 
 export default function OrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
      useEffect(() => {
@@ -59,8 +61,43 @@ export default function OrdersPage() {
             router.push('/login');
             return;
         }
-        setOrders(mockOrders);
+
+        const fetchOrders = () => {
+             const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+             // To ensure we have some data to show initially, we can merge mock data if local storage is empty
+             if (storedOrders.length === 0) {
+                 setOrders(mockOrders);
+                 localStorage.setItem('orders', JSON.stringify(mockOrders));
+             } else {
+                 setOrders(storedOrders);
+             }
+             setIsLoading(false);
+        };
+
+        fetchOrders();
+        
+        const handleOrdersUpdate = () => {
+             const updatedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+             setOrders(updatedOrders);
+        }
+        window.addEventListener('ordersUpdated', handleOrdersUpdate);
+
+
+        return () => window.removeEventListener('ordersUpdated', handleOrdersUpdate);
     }, [router]);
+
+
+    if (isLoading) {
+        return (
+             <div className="grid flex-1 auto-rows-max gap-4">
+                 <div className="flex items-center">
+                    <h1 className="text-lg font-semibold md:text-2xl font-headline flex items-center gap-2"><ListOrdered /> My Orders</h1>
+                </div>
+                 <Skeleton className="h-48 w-full" />
+                 <Skeleton className="h-48 w-full" />
+            </div>
+        )
+    }
 
     return (
         <div className="grid flex-1 auto-rows-max gap-4">
@@ -86,9 +123,9 @@ export default function OrdersPage() {
                         <CardContent className="space-y-4">
                             <div>
                                <p className="text-sm font-medium mb-2">Items</p>
-                                <div className="flex space-x-4">
+                                <div className="flex space-x-4 overflow-x-auto pb-2">
                                     {order.items.map(item => (
-                                        <div key={item.name} className="flex flex-col items-center gap-2">
+                                        <div key={item.name} className="flex flex-col items-center gap-2 flex-shrink-0">
                                             <img src={item.image} alt={item.name} className="h-16 w-16 rounded-md object-cover" />
                                             <span className="text-xs text-center w-20 truncate">{item.name}</span>
                                         </div>
@@ -99,7 +136,7 @@ export default function OrdersPage() {
                                 <p className="text-sm font-medium mb-2">Order Status</p>
                                  <div className="relative h-2 rounded-full bg-muted">
                                     <div 
-                                        className={`absolute h-2 rounded-full ${statusConfig[order.status].color}`}
+                                        className={`absolute h-2 rounded-full ${statusConfig[order.status].color} transition-all duration-500`}
                                         style={{ width: `${statusConfig[order.status].progress}%`}}
                                     ></div>
                                 </div>
@@ -125,3 +162,5 @@ export default function OrdersPage() {
         </div>
     );
 }
+
+    

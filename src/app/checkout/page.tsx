@@ -120,12 +120,33 @@ export default function CheckoutPage() {
 
   function onSubmit(values: z.infer<typeof checkoutSchema>) {
     console.log("Simulating payment with:", values);
+
+    // Create the new order
+    const newOrder = {
+        id: `#KC${Math.floor(Math.random() * 9000) + 1000}`,
+        date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+        total: `₹${total.toFixed(2)}`,
+        status: 'Processing' as const,
+        trackingNumber: `AWB${Math.floor(Math.random() * 90000000) + 10000000}`,
+        items: cart.map(item => ({ name: item.name, image: item.image })),
+    };
+
+    // Get existing orders and add the new one
+    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const updatedOrders = [newOrder, ...existingOrders];
+    localStorage.setItem('orders', JSON.stringify(updatedOrders));
+
+    // Clear cart and notify other components
+    localStorage.removeItem('cart');
+    window.dispatchEvent(new Event('cartUpdated'));
+    window.dispatchEvent(new Event('ordersUpdated'));
+
+
     toast({
       title: "Payment Successful!",
       description: "Your order is being processed.",
     });
-    localStorage.removeItem('cart');
-    window.dispatchEvent(new Event('cartUpdated'));
+
     router.push("/order-confirmation");
   }
 
@@ -300,3 +321,5 @@ export default function CheckoutPage() {
     </main>
   );
 }
+
+    
