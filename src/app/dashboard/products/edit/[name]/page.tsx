@@ -14,10 +14,10 @@ export default function EditProductPage({ params }: { params: { name: string } }
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { name: encodedName } = params;
-
+    
     useEffect(() => {
         async function fetchProduct() {
+            const { name: encodedName } = params;
             if (!encodedName) {
                 setLoading(false);
                 setError("Product name not found in URL.");
@@ -41,7 +41,7 @@ export default function EditProductPage({ params }: { params: { name: string } }
         }
 
         fetchProduct();
-    }, [encodedName]);
+    }, [params]);
 
 
     return (
