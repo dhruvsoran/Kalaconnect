@@ -33,7 +33,9 @@ export default function EditProductPage({ params }: { params: { name: string } }
             }
         }
 
-        fetchProduct();
+        if (params.name) {
+            fetchProduct();
+        }
     }, [params.name]);
 
 
