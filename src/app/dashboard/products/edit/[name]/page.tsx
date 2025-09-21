@@ -15,9 +15,11 @@ export default function EditProductPage({ params }: { params: { name: string } }
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     
+    // Correctly unwrap the params promise using React.use()
+    const { name: encodedName } = use(params);
+    
     useEffect(() => {
         async function fetchProduct() {
-            const encodedName = params.name;
             if (!encodedName) {
                 setLoading(false);
                 setError("Product name not found in URL.");
@@ -41,7 +43,7 @@ export default function EditProductPage({ params }: { params: { name: string } }
         }
 
         fetchProduct();
-    }, [params]);
+    }, [encodedName]);
 
 
     return (
