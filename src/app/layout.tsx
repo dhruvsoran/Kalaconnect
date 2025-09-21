@@ -29,6 +29,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <title>KalaConnect</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Empowering Indian Artisans in the Digital Marketplace" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
