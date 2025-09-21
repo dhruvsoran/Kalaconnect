@@ -29,8 +29,8 @@ export function SiteHeader() {
         <header className={cn(
             "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
         )}>
-            <div className="container flex h-20 items-center justify-between">
-                <Link href="/" className="flex items-center gap-2 font-bold text-2xl font-headline transition-colors active:text-accent active:animate-pop">
+            <div className="container flex h-20 items-center">
+                <Link href="/" className="mr-auto flex items-center gap-2 font-bold text-2xl font-headline transition-colors active:text-accent active:animate-pop">
                     <KalaConnectIcon className="h-8 w-8 text-primary" />
                     KalaConnect
                 </Link>
@@ -69,6 +69,10 @@ export function SiteHeader() {
                                 <Link href="/explore" className="text-lg font-semibold" onClick={() => setOpen(false)}>
                                     Explore
                                 </Link>
+                                <div className="flex flex-col gap-4 mt-6">
+                                     <Link href="/login" className="text-lg font-semibold" onClick={() => setOpen(false)}>Log In</Link>
+                                     <Button asChild onClick={() => setOpen(false)}><Link href="/register">Sign Up</Link></Button>
+                                </div>
                             </div>
                         </SheetContent>
                     </Sheet>
@@ -77,3 +81,4 @@ export function SiteHeader() {
         </header>
     );
 }
+
