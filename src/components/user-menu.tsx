@@ -40,6 +40,10 @@ export function UserMenu() {
         if (typeof window !== 'undefined') {
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('userRole');
+            localStorage.removeItem('cart');
+            localStorage.removeItem('wishlist');
+            window.dispatchEvent(new Event('cartUpdated'));
+            window.dispatchEvent(new Event('wishlistUpdated'));
         }
         router.push('/');
     };

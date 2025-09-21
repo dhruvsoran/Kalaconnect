@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Heart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,7 @@ export function HomeHeaderActions() {
     const [isLoading, setIsLoading] = useState(true);
     const [cartCount, setCartCount] = useState(0);
     const [wishlistCount, setWishlistCount] = useState(0);
+    const router = useRouter();
 
     useEffect(() => {
         // This code runs only on the client
@@ -49,6 +51,7 @@ export function HomeHeaderActions() {
         setIsLoggedIn(false);
         window.dispatchEvent(new Event('cartUpdated'));
         window.dispatchEvent(new Event('wishlistUpdated'));
+        router.push('/');
     };
 
     if (isLoading) {
