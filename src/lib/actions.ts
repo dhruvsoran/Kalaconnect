@@ -5,7 +5,6 @@ import { generateProductDescription, GenerateProductDescriptionInput } from "@/a
 import { createMarketingContent, CreateMarketingContentInput } from "@/ai/flows/create-marketing-content";
 import { getChatbotAssistance, GetChatbotAssistanceInput } from "@/ai/flows/get-chatbot-assistance";
 import { addProduct, deleteProduct as deleteProductDb, Profile, Product, saveProfile as saveProfileDb, updateProduct } from "@/lib/db";
-import { VisualizeProductInRoomInput, visualizeProductInRoom } from "@/ai/flows/visualize-product-in-room";
 import { revalidatePath } from "next/cache";
 
 type GenerateProductDescriptionActionInput = Omit<GenerateProductDescriptionInput, "productImageUri"> & {
@@ -98,15 +97,5 @@ export async function saveProfileAction(profileData: Profile) {
     } catch (error) {
         console.error("Error in saveProfileAction:", error);
         return { error: "Failed to save profile." };
-    }
-}
-
-export async function visualizeProductInRoomAction(input: VisualizeProductInRoomInput) {
-    try {
-        const result = await visualizeProductInRoom(input);
-        return { generatedImageUri: result.generatedImageUri };
-    } catch (error) {
-        console.error("Error in visualizeProductInRoomAction:", error);
-        return { error: "Failed to generate visualization. Please try again." };
     }
 }

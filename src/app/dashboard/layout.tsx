@@ -13,7 +13,6 @@ import {
   User,
   ShoppingCart,
   Heart,
-  Camera,
   ListOrdered,
 } from 'lucide-react';
 import { KalaConnectIcon } from '@/components/icons';
@@ -53,9 +52,6 @@ export default function DashboardLayout({
                     </NavItem>
                     <NavItem icon={<Package className="h-4 w-4" />} href="/dashboard/products">
                         Products
-                    </NavItem>
-                     <NavItem icon={<Camera className="h-4 w-4" />} href="/dashboard/visualizer">
-                        AI Visualizer
                     </NavItem>
                     <NavItem icon={<Brush className="h-4 w-4" />} href="/dashboard/marketing">
                         Marketing
