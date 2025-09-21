@@ -7,11 +7,15 @@ import { HomeHeaderActions } from "@/components/home-header-actions";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 export function SiteHeader() {
     const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
     const isHomePage = pathname === '/';
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -41,7 +45,34 @@ export function SiteHeader() {
                     Explore
                     </Link>
                 </nav>
-                <HomeHeaderActions />
+                 <div className="flex items-center gap-2">
+                    <HomeHeaderActions />
+                    <Sheet open={open} onOpenChange={setOpen}>
+                        <SheetTrigger asChild>
+                             <Button variant="ghost" size="icon" className="md:hidden">
+                                <Menu />
+                                <span className="sr-only">Toggle Menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left">
+                            <div className="grid gap-6 py-6">
+                                 <Link href="/" className="flex items-center gap-2 font-bold text-2xl font-headline" onClick={() => setOpen(false)}>
+                                    <KalaConnectIcon className="h-8 w-8 text-primary" />
+                                    KalaConnect
+                                </Link>
+                                <Link href="/#features" className="text-lg font-semibold" onClick={() => setOpen(false)}>
+                                    Features
+                                </Link>
+                                <Link href="/#about" className="text-lg font-semibold" onClick={() => setOpen(false)}>
+                                    About
+                                </Link>
+                                <Link href="/explore" className="text-lg font-semibold" onClick={() => setOpen(false)}>
+                                    Explore
+                                </Link>
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                </div>
             </div>
         </header>
     );

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from './ui/skeleton';
 
 export function HomeHeaderActions() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -46,16 +47,16 @@ export function HomeHeaderActions() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center gap-4">
-                <div className="h-9 w-20 rounded-md bg-muted animate-pulse" />
-                <div className="h-9 w-24 rounded-md bg-muted animate-pulse" />
+            <div className="flex items-center gap-2">
+                <Skeleton className="h-9 w-20 rounded-md" />
+                <Skeleton className="h-9 w-24 rounded-md" />
             </div>
         );
     }
 
     if (isLoggedIn) {
         return (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" asChild>
                      <Link href="/cart" className="relative">
                         <ShoppingCart className="h-5 w-5" />
@@ -64,16 +65,18 @@ export function HomeHeaderActions() {
                         )}
                     </Link>
                 </Button>
-                <Button asChild>
-                    <Link href="/dashboard">Dashboard</Link>
-                </Button>
-                <Button variant="ghost" onClick={handleLogout}>Log Out</Button>
+                <div className="hidden sm:flex items-center gap-2">
+                    <Button asChild>
+                        <Link href="/dashboard">Dashboard</Link>
+                    </Button>
+                    <Button variant="ghost" onClick={handleLogout}>Log Out</Button>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
              <Button variant="ghost" size="icon" asChild>
                 <Link href="/cart" className="relative">
                     <ShoppingCart className="h-5 w-5" />
@@ -82,12 +85,14 @@ export function HomeHeaderActions() {
                     )}
                 </Link>
             </Button>
-            <Button variant="ghost" asChild>
-                <Link href="/login">Log In</Link>
-            </Button>
-            <Button asChild>
-                <Link href="/register">Sign Up</Link>
-            </Button>
+            <div className="hidden sm:flex items-center gap-2">
+                <Button variant="ghost" asChild>
+                    <Link href="/login">Log In</Link>
+                </Button>
+                <Button asChild>
+                    <Link href="/register">Sign Up</Link>
+                </Button>
+            </div>
         </div>
     );
 }
