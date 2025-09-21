@@ -62,10 +62,10 @@
     },
     {
       "name": "Bidri-work Trinket Box",
-      "description": "An elegant trinket box made with Bidriware, a metal handicraft from Bidar. It features a dark zinc alloy inlaid with pure silver wire.",
-      "status": "Active",
-      "price": "₹5,500",
-      "stock": 15,
+      "description": "Discover the profound legacy of Indian artistry with this exquisite Bidri-work Trinket Box, a true jewel of craftsmanship hailing from the vibrant heart of Delhi. Born from the opulent courts of the 17th-century Deccani Sultanates, Bidri-work is an intricate metal inlay craft revered for its striking contrast and sophisticated elegance. This trinket box is meticulously handcrafted, featuring pure silver inlaid into a specially prepared dark alloy of zinc and copper. The unique process involves delicate engraving, precise silver wire or sheet inlay, and a traditional blackening treatment using local soil, which intensifies the silver's radiant gleam against the velvety dark background. Each curve and motif on this elegant box speaks volumes of the artisan's dedication and ancestral skill, transforming a utilitarian object into a captivating work of art. While embracing modern aesthetics, this piece beautifully preserves a centuries-old technique, offering a tangible connection to India's rich cultural tapestry. Ideal for safeguarding your most cherished mementos or adding a touch of historic grandeur to any space, this Bidri-work Trinket Box is not merely an accessory, but a timeless heirloom crafted with unparalleled precision and passion.",
+      "status": "Draft",
+      "price": "₹4445",
+      "stock": "4",
       "date": "2024-05-10T12:00:00Z",
       "image": "https://picsum.photos/seed/box/800/800",
       "aiHint": "metal box"
