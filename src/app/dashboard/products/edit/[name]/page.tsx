@@ -14,12 +14,19 @@ export default function EditProductPage({ params }: { params: { name: string } }
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const { name: encodedName } = params;
 
     useEffect(() => {
         async function fetchProduct() {
+            if (!encodedName) {
+                setLoading(false);
+                setError("Product name not found in URL.");
+                return;
+            };
+
             try {
                 const products = await getProducts();
-                const productName = decodeURIComponent(params.name);
+                const productName = decodeURIComponent(encodedName);
                 const foundProduct = products.find(p => p.name === productName);
                 if (foundProduct) {
                     setProduct(foundProduct);
@@ -33,10 +40,8 @@ export default function EditProductPage({ params }: { params: { name: string } }
             }
         }
 
-        if (params.name) {
-            fetchProduct();
-        }
-    }, [params.name]);
+        fetchProduct();
+    }, [encodedName]);
 
 
     return (
@@ -63,3 +68,4 @@ export default function EditProductPage({ params }: { params: { name: string } }
         </div>
     );
 }
+
