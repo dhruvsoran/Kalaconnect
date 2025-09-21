@@ -14,6 +14,7 @@ import {
   ShoppingCart,
   Heart,
   Camera,
+  ListOrdered,
 } from 'lucide-react';
 import { KalaConnectIcon } from '@/components/icons';
 import { UserMenu } from '@/components/user-menu';
@@ -53,6 +54,9 @@ export default function DashboardLayout({
                     <NavItem icon={<Package className="h-4 w-4" />} href="/dashboard/products">
                         Products
                     </NavItem>
+                     <NavItem icon={<Camera className="h-4 w-4" />} href="/dashboard/visualizer">
+                        AI Visualizer
+                    </NavItem>
                     <NavItem icon={<Brush className="h-4 w-4" />} href="/dashboard/marketing">
                         Marketing
                     </NavItem>
@@ -77,8 +81,11 @@ export default function DashboardLayout({
                     <NavItem icon={<ShoppingCart className="h-4 w-4" />} href="/cart">
                         My Cart
                     </NavItem>
-                     <NavItem icon={<Heart className="h-4 w-4" />} href="#">
+                     <NavItem icon={<Heart className="h-4 w-4" />} href="/wishlist">
                         Wishlist
+                    </NavItem>
+                     <NavItem icon={<ListOrdered className="h-4 w-4" />} href="/dashboard/orders">
+                        My Orders
                     </NavItem>
                      <NavItem icon={<User className="h-4 w-4" />} href="/dashboard/profile">
                         Profile

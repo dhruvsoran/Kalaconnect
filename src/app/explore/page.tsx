@@ -9,6 +9,8 @@ import { getProducts, Product } from '@/lib/db';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { Heart, ShoppingCart } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function ExplorePage() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -60,17 +62,30 @@ function ProductCard({ product }: { product: Product }) {
     const { toast } = useToast();
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [wishlist, setWishlist] = useState<Product[]>([]);
 
     useEffect(() => {
         setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
-    }, []);
+        const storedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        setWishlist(storedWishlist);
 
-    const handleAddToCart = () => {
-        if (!isLoggedIn) {
+        const handleWishlistUpdate = () => {
+             const updatedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+             setWishlist(updatedWishlist);
+        }
+        window.addEventListener('wishlistUpdated', handleWishlistUpdate);
+
+        return () => window.removeEventListener('wishlistUpdated', handleWishlistUpdate);
+    }, []);
+    
+    const isProductInWishlist = wishlist.some((item: Product) => item.name === product.name);
+
+    const handleAuthAction = (callback: () => void) => {
+         if (!isLoggedIn) {
             toast({
                 variant: "destructive",
                 title: "Authentication Required",
-                description: "Please log in to add items to your cart.",
+                description: "Please log in to perform this action.",
                 action: (
                     <Button variant="outline" size="sm" onClick={() => router.push('/login')}>
                         Login
@@ -79,37 +94,67 @@ function ProductCard({ product }: { product: Product }) {
             });
             return;
         }
+        callback();
+    }
 
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const isProductInCart = cart.some((item: Product) => item.name === product.name);
+    const handleAddToCart = () => {
+        handleAuthAction(() => {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const isProductInCart = cart.some((item: Product) => item.name === product.name);
 
-        if (isProductInCart) {
-             toast({
-                variant: "destructive",
-                title: "Already in Cart",
-                description: `${product.name} is already in your shopping cart.`,
+            if (isProductInCart) {
+                 toast({
+                    variant: "destructive",
+                    title: "Already in Cart",
+                    description: `${product.name} is already in your shopping cart.`,
+                });
+                return;
+            }
+
+            const newCart = [...cart, product];
+            localStorage.setItem('cart', JSON.stringify(newCart));
+            window.dispatchEvent(new Event('cartUpdated'));
+
+            toast({
+                title: "Added to Cart!",
+                description: `Successfully added ${product.name} to your cart.`,
+                action: (
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/cart">View Cart</Link>
+                    </Button>
+                ),
             });
-            return;
-        }
-
-        const newCart = [...cart, product];
-        localStorage.setItem('cart', JSON.stringify(newCart));
-        window.dispatchEvent(new Event('cartUpdated'));
-
-        toast({
-            title: "Added to Cart!",
-            description: `Successfully added ${product.name} to your cart.`,
-            action: (
-                <Button variant="outline" size="sm" asChild>
-                    <Link href="/cart">View Cart</Link>
-                </Button>
-            ),
         });
     };
 
+    const handleWishlistToggle = () => {
+        handleAuthAction(() => {
+            let newWishlist = [...wishlist];
+            if (isProductInWishlist) {
+                newWishlist = newWishlist.filter(item => item.name !== product.name);
+                 toast({
+                    title: "Removed from Wishlist",
+                    description: `${product.name} has been removed from your wishlist.`,
+                });
+            } else {
+                newWishlist.push(product);
+                 toast({
+                    title: "Added to Wishlist!",
+                    description: `${product.name} has been added to your wishlist.`,
+                });
+            }
+            setWishlist(newWishlist);
+            localStorage.setItem('wishlist', JSON.stringify(newWishlist));
+            window.dispatchEvent(new Event('wishlistUpdated'));
+        });
+    }
+
     return (
         <Card className="overflow-hidden flex flex-col animate-fade-in group">
-            <CardHeader className="p-0">
+            <CardHeader className="p-0 relative">
+                 <Button size="icon" variant="ghost" className="absolute top-2 right-2 z-10 bg-white/50 backdrop-blur-sm rounded-full" onClick={handleWishlistToggle}>
+                    <Heart className={cn("h-5 w-5", isProductInWishlist ? "fill-red-500 text-red-500" : "text-gray-500")} />
+                </Button>
                 <Image
                     src={product.image}
                     alt={product.name}
@@ -125,7 +170,7 @@ function ProductCard({ product }: { product: Product }) {
             </CardContent>
             <CardFooter className="p-4 pt-0 flex justify-between items-center">
                  <p className="font-semibold text-lg">{product.price}</p>
-                <Button size="sm" onClick={handleAddToCart}>Add to Cart</Button>
+                <Button size="sm" onClick={handleAddToCart}><ShoppingCart className="mr-2 h-4 w-4" />Add to Cart</Button>
             </CardFooter>
         </Card>
     )

@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Heart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from './ui/skeleton';
 
@@ -12,6 +12,7 @@ export function HomeHeaderActions() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [cartCount, setCartCount] = useState(0);
+    const [wishlistCount, setWishlistCount] = useState(0);
 
     useEffect(() => {
         // This code runs only on the client
@@ -19,19 +20,23 @@ export function HomeHeaderActions() {
         setIsLoggedIn(loggedInStatus);
         setIsLoading(false);
 
-        const updateCartCount = () => {
+        const updateCounts = () => {
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
             setCartCount(cart.length);
+            const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+            setWishlistCount(wishlist.length);
         };
         
-        updateCartCount();
+        updateCounts();
 
-        window.addEventListener('storage', updateCartCount); // Listen for changes from other tabs
-        window.addEventListener('cartUpdated', updateCartCount); // Custom event
+        window.addEventListener('storage', updateCounts); // Listen for changes from other tabs
+        window.addEventListener('cartUpdated', updateCounts); // Custom event for cart
+        window.addEventListener('wishlistUpdated', updateCounts); // Custom event for wishlist
 
         return () => {
-            window.removeEventListener('storage', updateCartCount);
-            window.removeEventListener('cartUpdated', updateCartCount);
+            window.removeEventListener('storage', updateCounts);
+            window.removeEventListener('cartUpdated', updateCounts);
+            window.removeEventListener('wishlistUpdated', updateCounts);
         };
 
     }, []);
@@ -39,15 +44,18 @@ export function HomeHeaderActions() {
     const handleLogout = () => {
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('userRole');
+        localStorage.removeItem('cart');
+        localStorage.removeItem('wishlist');
         setIsLoggedIn(false);
-        // Optionally, clear the cart on logout
-        // localStorage.removeItem('cart');
-        // window.dispatchEvent(new Event('cartUpdated'));
+        window.dispatchEvent(new Event('cartUpdated'));
+        window.dispatchEvent(new Event('wishlistUpdated'));
     };
 
     if (isLoading) {
         return (
             <div className="flex items-center gap-2">
+                <Skeleton className="h-9 w-9 rounded-md" />
+                <Skeleton className="h-9 w-9 rounded-md" />
                 <Skeleton className="h-9 w-20 rounded-md" />
                 <Skeleton className="h-9 w-24 rounded-md" />
             </div>
@@ -57,6 +65,14 @@ export function HomeHeaderActions() {
     if (isLoggedIn) {
         return (
             <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" asChild>
+                     <Link href="/wishlist" className="relative">
+                        <Heart className="h-5 w-5" />
+                        {wishlistCount > 0 && (
+                            <Badge className="absolute -right-2 -top-2 h-5 w-5 justify-center p-0">{wishlistCount}</Badge>
+                        )}
+                    </Link>
+                </Button>
                 <Button variant="ghost" size="icon" asChild>
                      <Link href="/cart" className="relative">
                         <ShoppingCart className="h-5 w-5" />
