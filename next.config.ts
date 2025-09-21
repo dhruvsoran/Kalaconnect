@@ -34,6 +34,12 @@ const nextConfig: NextConfig = {
         hostname: '5.imimg.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'png.pngtree.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
