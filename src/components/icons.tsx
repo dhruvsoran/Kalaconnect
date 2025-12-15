@@ -5,7 +5,7 @@ export function KalaConnectIcon(props: SVGProps<SVGSVGElement>) {
   const { className, ...rest } = props;
   return (
     <Image
-      src="https://png.pngtree.com/png-vector/20240607/ourmid/pngtree-unique-logo-designs-colorful-abstract-images-modern-artistic-logos-creative-art-png-image_12575011.png"
+      src="https://thumbs.dreamstime.com/b/rainbow-circle-logo-logo-rainbow-circle-symbol-infinite-cycle-color-abstract-isolated-pattern-white-background-120099960.jpg"
       alt="KalaConnect Logo"
       width={props.width ? Number(props.width) : 32}
       height={props.height ? Number(props.height) : 32}
