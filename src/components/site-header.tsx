@@ -32,7 +32,7 @@ export function SiteHeader() {
             <div className="flex h-20 items-center px-4 sm:px-6 lg:px-8">
                 <Link href="/" className="flex items-center gap-2 font-bold text-2xl font-headline transition-colors active:text-accent active:animate-pop">
                     <KalaConnectIcon className="h-8 w-8 text-primary" />
-                    KalaConnect
+                    कलाConnect
                 </Link>
                 <div className="container flex items-center justify-end gap-6 ml-auto">
                     <nav className="hidden md:flex gap-6">
